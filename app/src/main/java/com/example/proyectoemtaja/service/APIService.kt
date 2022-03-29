@@ -1,6 +1,6 @@
-package com.example.projectemt.service
+package com.example.proyectoemtaja.service
 
-import com.example.projectemt.models.TimeArrivalBus
+import com.example.proyectoemtaja.models.TimeArrivalBus
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Url
@@ -8,5 +8,5 @@ import retrofit2.http.Url
 interface APIService {
 
     @GET
-    suspend fun getTimeArrivalBus(@Url url:String):Response<TimeArrivalBus>
+    suspend fun getTimeArrivalBus(@Url url:String): Response<TimeArrivalBus>
 }
