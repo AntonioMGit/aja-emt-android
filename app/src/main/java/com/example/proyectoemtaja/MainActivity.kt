@@ -3,29 +3,59 @@ package com.example.proyectoemtaja
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.databinding.ActivityMainBinding
+import com.example.proyectoemtaja.models.Arrive
 import com.example.proyectoemtaja.models.TimeArrivalBus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.Exception
+import java.util.*
+import java.util.stream.Collectors
+import kotlin.Comparator
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var btnBuscar: Button
+    private lateinit var etParada: EditText
+    private lateinit var rvBuses: RecyclerView
+
+    val lista = ArrayList<Map.Entry<String, List<Arrive>>>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
 
-        searchParada("5111")
+        btnBuscar = findViewById(R.id.btnBuscarParada)
+        etParada = findViewById(R.id.etParada)
+        rvBuses = findViewById(R.id.rvBusesParada)
+        rvBuses.layoutManager = LinearLayoutManager(this)
+        rvBuses.adapter = BusParadaAdapter(lista)
+
+        btnBuscar.setOnClickListener{
+            accionBoton()
+        }
+    }
+
+    private fun accionBoton() {
+        val parada = etParada.text.toString().trim()
+        //rvBuses.adapter = null
+        searchParada(parada = parada)
+        etParada.text.clear()
     }
 
     private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl("http://noMeDoxeesPLS:8080/prueba/").addConverterFactory(
+        return Retrofit.Builder().baseUrl("http://192.168.1.39:8080/prueba/").addConverterFactory(
             GsonConverterFactory.create()).build()
 
     }
@@ -35,15 +65,41 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
 
             val call= getRetrofit().create(APIService::class.java).getTimeArrivalBus("consultar/$parada/")
-            val timeArrivalBus = call.body()
 
             if (call.isSuccessful){
-                runOnUiThread {
-                    binding.textw.text = timeArrivalBus.toString()
+
+                Log.d("Debug", "Entramos a actualizar datos")
+
+                try {
+                    val timeArrivalBus = call.body() //exceptioon
+                    var mapa = timeArrivalBus?.data?.get(0)?.arrive?.stream()?.collect(Collectors.groupingBy { it.line })
+
+                    lista.clear()
+
+                    mapa?.forEach {
+                        if (it.value.size > 0) {
+                            lista.add(it)
+                        }
+                    }
+
+                    lista.sortWith(Comparator { entry, entry2 ->
+                        entry.value.get(0).estimateArrive - (entry2.value.get(0).estimateArrive)
+                    })
+
+                    Log.d("Debug", "Datos actualizados")
+
+                }catch (e: Exception) {
+                    Log.e("Error", "Error al actializar datos")
                 }
 
-            }else{
-                Log.d("pruebaaaaaaa","errorrrrr")
+                Log.d("Debug", "RV actualizados")
+            }
+            else{
+                Log.e("Debug","Error al buscar")
+            }
+
+            runOnUiThread {
+                rvBuses.adapter?.notifyDataSetChanged()
             }
         }
 
