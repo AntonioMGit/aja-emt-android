@@ -1,6 +1,4 @@
-package com.example.proyectoemtaja.models
-
-import android.media.audiofx.AudioEffect
+package com.example.proyectoemtaja.models.TimeArrival
 
 data class IncidentData(
     val title: String,

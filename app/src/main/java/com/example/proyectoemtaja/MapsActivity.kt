@@ -11,8 +11,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.example.proyectoemtaja.databinding.ActivityMapsBinding
-import com.example.proyectoemtaja.models.Arrive
-import com.example.proyectoemtaja.models.listaParadas.DataListaParadas
 import com.example.proyectoemtaja.models.listaParadas.ListaParadas
 import com.example.proyectoemtaja.service.APIService
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +20,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
 import java.util.ArrayList
-import java.util.stream.Collectors
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 

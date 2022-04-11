@@ -1,6 +1,5 @@
-package com.example.proyectoemtaja.models
+package com.example.proyectoemtaja.models.TimeArrival
 
-import com.example.proyectoemtaja.models.Data
 import com.google.gson.annotations.SerializedName
 import java.util.ArrayList
 

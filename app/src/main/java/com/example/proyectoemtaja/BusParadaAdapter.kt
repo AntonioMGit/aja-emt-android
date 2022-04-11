@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.proyectoemtaja.models.Arrive
+import com.example.proyectoemtaja.models.TimeArrival.Arrive
 import java.util.stream.IntStream
 
 class BusParadaAdapter(private val datos: ArrayList<Map.Entry<String, List<Arrive>>>) : RecyclerView.Adapter<BusParadaAdapter.ViewHolderDatos>() {

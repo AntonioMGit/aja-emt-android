@@ -1,4 +1,4 @@
-package com.example.proyectoemtaja.models
+package com.example.proyectoemtaja.models.TimeArrival
 
 import java.util.ArrayList
 

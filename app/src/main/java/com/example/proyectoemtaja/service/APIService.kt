@@ -1,6 +1,6 @@
 package com.example.proyectoemtaja.service
 
-import com.example.proyectoemtaja.models.TimeArrivalBus
+import com.example.proyectoemtaja.models.TimeArrival.TimeArrivalBus
 import com.example.proyectoemtaja.models.listaParadas.ListaParadas
 import retrofit2.Response
 import retrofit2.http.GET
