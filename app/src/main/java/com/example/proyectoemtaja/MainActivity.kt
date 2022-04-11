@@ -1,5 +1,6 @@
 package com.example.proyectoemtaja
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -29,6 +30,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var etParada: EditText
     private lateinit var rvBuses: RecyclerView
 
+    private lateinit var btnMaps: Button
+
     val lista = ArrayList<Map.Entry<String, List<Arrive>>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,8 +45,13 @@ class MainActivity : AppCompatActivity() {
         rvBuses.layoutManager = LinearLayoutManager(this)
         rvBuses.adapter = BusParadaAdapter(lista)
 
+        btnMaps = findViewById(R.id.btnMaps)
+
         btnBuscar.setOnClickListener{
             accionBoton()
+        }
+        btnMaps.setOnClickListener{
+            startActivity(Intent(this, MapsActivity::class.java))
         }
     }
 
@@ -55,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl("http://192.168.1.39:8080/prueba/").addConverterFactory(
+        return Retrofit.Builder().baseUrl("http://192.168.1.41:8080/prueba/").addConverterFactory(
             GsonConverterFactory.create()).build()
 
     }
