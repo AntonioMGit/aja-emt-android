@@ -1,5 +1,6 @@
 package com.example.proyectoemtaja
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var btnBuscar: Button
+    private lateinit var btnMaps: Button
     private lateinit var etParada: EditText
     private lateinit var rvBuses: RecyclerView
 
@@ -41,9 +43,16 @@ class MainActivity : AppCompatActivity() {
         rvBuses.layoutManager = LinearLayoutManager(this)
         rvBuses.adapter = BusParadaAdapter(lista)
 
+        btnMaps = binding.btnMaps
+
         btnBuscar.setOnClickListener{
             accionBoton()
         }
+
+        btnMaps.setOnClickListener{
+            startActivity(Intent(this, MapsActivity::class.java))
+        }
+
     }
 
     private fun accionBoton() {

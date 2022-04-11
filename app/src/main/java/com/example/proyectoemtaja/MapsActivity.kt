@@ -52,10 +52,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        //datos centro de madrid
+        var latitud = 40.4165
+        var longitud = -3.70256
+        val madrid = LatLng(latitud,longitud)
+
+        mMap.addMarker(MarkerOptions().position(madrid).title("Madrid"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(madrid,13f))
 
         listarParadas()
     }
@@ -68,7 +71,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
     private fun listarParadas(){
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Main).launch {
 
             val call= getRetrofit().create(APIService::class.java).getListaParadas("listar-paradas/")
 
@@ -79,40 +82,29 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 try {
                     val paradas = call.body() //exceptioon
 
-                    var cosa = paradas?.data?.get(0)
+                    var i = 0
+                    for (i in 0..9){ //prueba con los 9 primeros
+                        var cosa = paradas?.data?.get(i)
 
-                    Log.d("Debug", cosa.toString())
+                        Log.d("Debug", i.toString() + ": " + cosa.toString())
 
-                    /*
-                    var mapa = timeArrivalBus?.data?.get(0)?.arrive?.stream()?.collect(Collectors.groupingBy { it.line })
+                        var latitud = cosa?.geometry?.coordinates?.get(1)
+                        var longitud = cosa?.geometry?.coordinates?.get(0)
 
-                            lista.clear()
-
-                            mapa?.forEach {
-                                if (it.value.size > 0) {
-                                    lista.add(it)
-                                }
+                        val parada = LatLng(latitud!!,longitud!!)
+                        mMap.addMarker(MarkerOptions().position(parada).title(cosa?.name))
                     }
-
-                    lista.sortWith(Comparator { entry, entry2 ->
-                        entry.value.get(0).estimateArrive - (entry2.value.get(0).estimateArrive)
-                    })
-
-                     */
-
                     Log.d("Debug", "Datos actualizados")
 
                 }catch (e: Exception) {
                     Log.e("Error", "Error al actializar datos")
+                    Log.e("Error", e.stackTraceToString())
                 }
-
                 Log.d("Debug", "RV actualizados")
             }
             else{
                 Log.e("Debug","Error al buscar")
             }
-
         }
     }
-
 }
