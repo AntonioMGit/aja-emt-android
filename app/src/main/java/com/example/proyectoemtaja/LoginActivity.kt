@@ -9,11 +9,15 @@ import android.widget.Toast
 import com.example.proyectoemtaja.databinding.ActivityLoginBinding
 import com.example.proyectoemtaja.databinding.ActivityMapsBinding
 import com.example.proyectoemtaja.service.APIService
+import com.example.proyectoemtaja.utilities.NullOnEmptyConverterFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.newCoroutineContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.Exception
+import java.util.HashMap
 
 class LoginActivity : AppCompatActivity() {
 
@@ -35,19 +39,34 @@ class LoginActivity : AppCompatActivity() {
 
             if(!etPassword.text.isBlank()&&!etUser.text.isBlank()){
                 CoroutineScope(Dispatchers.IO).launch {
-                   var call= getRetrofit().create(APIService::class.java)
-                        .login(etUser.toString(), etPassword.toString())
+/*
+                     var params:HashMap<String,String>
+                     params= HashMap()
+                    params.put("user",etUser.toString())
+                    params.put("password",etPassword.toString())
+*/
 
-                    runOnUiThread {
-                        if (call.isSuccessful) {
-                            textview.text = call.body()
-                        } else {
-                            Toast.makeText(
-                                this@LoginActivity,
-                                "fallo de conexion",
-                                Toast.LENGTH_LONG
-                            )
-                        }
+                    try {
+
+                        var call = getRetrofit().create(APIService::class.java)//.login(params)
+                            .login(etUser.toString(), etPassword.toString())
+
+                            if (call.isSuccessful) {
+                                runOnUiThread {
+                                    textview.text = call.body().toString()
+                                }
+                            } else {
+                                Toast.makeText(
+                                    this@LoginActivity,
+                                    "fallo de conexion",
+                                    Toast.LENGTH_LONG
+                                )
+                            }
+
+                    }catch (e:Exception){
+                        e.printStackTrace()
+
+
                     }
                 }
             }
@@ -58,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl("http://192.168.1.34:8081/login/").addConverterFactory(
+        return Retrofit.Builder().baseUrl("http://192.168.1.34:8081/").addConverterFactory(NullOnEmptyConverterFactory()).addConverterFactory(
             GsonConverterFactory.create()).build()
 
     }
