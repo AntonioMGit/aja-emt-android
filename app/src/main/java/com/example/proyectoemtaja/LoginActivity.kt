@@ -1,5 +1,6 @@
 package com.example.proyectoemtaja
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -25,31 +26,32 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       binding = ActivityLoginBinding.inflate(layoutInflater)
+
+        binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        etPassword=binding.password
-        etUser=binding.user
-        textview=binding.textView
 
-        binding.btnLogin.setOnClickListener {
+        etPassword=binding.etContrasenia
+        etUser=binding.etEmail
 
+        binding.btnRegistrarse.setOnClickListener{
+            startActivity(Intent(this, RegisterActivity::class.java))
+        }
+
+        binding.btnLoguear.setOnClickListener {
             if(!etPassword.text.isBlank()&&!etUser.text.isBlank()){
                 CoroutineScope(Dispatchers.IO).launch {
-                   var call= getRetrofit().create(APIService::class.java)
-                        .login(etUser.toString(), etPassword.toString())
+                    var call= getRetrofit().create(APIService::class.java).login(etUser.toString(), etPassword.toString())
 
                     runOnUiThread {
                         if (call.isSuccessful) {
                             textview.text = call.body()
                         } else {
-                            Toast.makeText(
-                                this@LoginActivity,
-                                "fallo de conexion",
-                                Toast.LENGTH_LONG
-                            )
+                            Toast.makeText(this@LoginActivity, "fallo de conexion", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
+            }else{
+                Toast.makeText(this, "Faltan campos por rellenar.", Toast.LENGTH_LONG).show()
             }
 
         }

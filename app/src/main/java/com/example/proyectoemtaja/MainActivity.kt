@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl("http://192.168.1.39:8080/prueba/").addConverterFactory(
+        return Retrofit.Builder().baseUrl("http://192.168.1.41:8080/prueba/").addConverterFactory(
             GsonConverterFactory.create()).build()
 
     }
