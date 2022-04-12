@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">ProyectoEmtAja</string>
+
+    <string-array name="sexo">
+        <item>Masculino</item>
+        <item>Femenino</item>
+        <item>No especificar</item>
+    </string-array>
 </resources>
