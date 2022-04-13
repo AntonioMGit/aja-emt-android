@@ -4,6 +4,7 @@ import com.example.proyectoemtaja.models.TimeArrival.TimeArrivalBus
 import com.example.proyectoemtaja.models.listaParadas.ListaParadas
 import com.example.proyectoemtaja.models.peticiones.LoginRequest
 import com.example.proyectoemtaja.models.peticiones.LoginResponse
+import com.example.proyectoemtaja.models.usuario.Usuario
 import com.google.android.gms.common.internal.safeparcel.SafeParcelable
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -16,6 +17,9 @@ interface APIService {
     @GET
     suspend fun getListaParadas(@Url url:String): Response<ListaParadas>
    // @POST("/login")
+
+    @POST("usuario/insertar/")
+    suspend fun insertUsuario(@Body usuario:Usuario)
 
     @POST("login")
     //@FormUrlEncoded

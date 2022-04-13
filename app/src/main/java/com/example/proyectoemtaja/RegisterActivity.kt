@@ -4,7 +4,9 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.*
+import com.example.proyectoemtaja.models.usuario.Sexo
 import java.time.LocalDate
 
 class RegisterActivity : AppCompatActivity() {
@@ -13,14 +15,14 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var btnRegistrar: Button
     private lateinit var boton: Button
     private lateinit var etFechaNacimiento: EditText
-
+    private lateinit var sexo:Sexo
     private lateinit var fechaSeleccionada: LocalDate
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        spSexo = findViewById(R.id.spSexo)
+        initSpinner()
 
         btnRegistrar = findViewById(R.id.btnRegistrar)
 
@@ -49,7 +51,10 @@ class RegisterActivity : AppCompatActivity() {
         boton.setOnClickListener{
             startActivity(Intent(this, MainActivity::class.java))
         }
+        btnRegistrar.setOnClickListener {
 
+
+        }
     }
 
     //Inicializar el dialogo creado en onCreateDialog de la clase DatePickerDialog
@@ -65,5 +70,28 @@ class RegisterActivity : AppCompatActivity() {
         fechaSeleccionada = LocalDate.of(year, (month+1), day)
 
         Toast.makeText(this, "Fecha: " + etFechaNacimiento.text, Toast.LENGTH_LONG).show()
+    }
+
+    fun initSpinner() {
+        spSexo = findViewById(R.id.spSexo)
+        val list= Sexo.values()
+        val adaptador=ArrayAdapter(this,android.R.layout.simple_spinner_item,list)
+        spSexo.adapter=adaptador
+
+        spSexo.onItemSelectedListener=object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                sexo= list[position]
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                sexo = Sexo.MUJER
+            }
+
+        }
     }
 }
