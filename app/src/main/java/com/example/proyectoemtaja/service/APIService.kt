@@ -19,7 +19,7 @@ interface APIService {
    // @POST("/login")
 
     @POST("usuario/insertar/")
-    suspend fun insertUsuario(@Body usuario:Usuario)
+    suspend fun insertUsuario(@Body usuario:Usuario):Response<Usuario>
 
     @POST("login")
     //@FormUrlEncoded

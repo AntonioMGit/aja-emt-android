@@ -6,30 +6,48 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import com.example.proyectoemtaja.config.MD5
+import com.example.proyectoemtaja.databinding.ActivityRegisterBinding
 import com.example.proyectoemtaja.models.usuario.Sexo
+import com.example.proyectoemtaja.models.usuario.Usuario
+import com.example.proyectoemtaja.service.APIService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var spSexo: Spinner
-    private lateinit var btnRegistrar: Button
-    private lateinit var boton: Button
+
     private lateinit var etFechaNacimiento: EditText
     private lateinit var sexo:Sexo
     private lateinit var fechaSeleccionada: LocalDate
-
+    private lateinit var binding: ActivityRegisterBinding
+    private lateinit var  correo:EditText
+    private lateinit var  password1:EditText
+    private lateinit var  password2:EditText
+    private lateinit var  nombre:EditText
+    private lateinit var  apellidos:EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
+        binding= ActivityRegisterBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initSpinner()
 
-        btnRegistrar = findViewById(R.id.btnRegistrar)
 
-        etFechaNacimiento = findViewById(R.id.etFechaNacimiento)
 
-        boton = findViewById(R.id.button)
+        etFechaNacimiento = binding.etFechaNacimiento//findViewById(R.id.etFechaNacimiento)
 
+       correo= binding.etCorreo
+        password1=binding.etPassword
+        password2=binding.etPassword2
+        nombre=binding.etNombre
+        apellidos=binding.etApellidos
+/*
         ArrayAdapter.createFromResource(
             this,
             R.array.sexo,
@@ -40,7 +58,7 @@ class RegisterActivity : AppCompatActivity() {
             // Apply the adapter to the spinner
             spSexo.adapter = adapter
         }
-
+*/
         //fechaSeleccionada = LocalDate.now()
 
         //Listener de la fecha
@@ -48,14 +66,54 @@ class RegisterActivity : AppCompatActivity() {
 
         //lo pongo para probar que lo demas funciona
         //habria que quitarlo
-        boton.setOnClickListener{
+
+        binding.button.setOnClickListener{
             startActivity(Intent(this, MainActivity::class.java))
         }
-        btnRegistrar.setOnClickListener {
+        binding.btnRegistrar.setOnClickListener {
 
+            if(correo.text.isNotBlank()&&password1.text.isNotBlank()&&password2.text.isNotBlank()&&nombre.text.isNotBlank()&&apellidos.text.isNotBlank()){
+                if(password1.text.equals(password2.text)){
+                    CoroutineScope(Dispatchers.IO).launch {
+                       val call= getRetrofit().create(APIService::class.java).insertUsuario(
+                            Usuario(
+                                correo.text.toString(),
+                                MD5.encriptar(password1.text.toString()),
+                                nombre.text.toString(),
+                                apellidos.text.toString(),
+                                LocalDate.now(),
+                                sexo
+                            )
+                        )
+                        runOnUiThread {
+                            if (call.isSuccessful) {
+
+                                Toast.makeText(applicationContext, "INSERTADO CORECTAMENTE", Toast.LENGTH_LONG)
+
+                            }else{
+                                Toast.makeText(applicationContext, "INSERTADO CORECTAMENTE", Toast.LENGTH_LONG)
+
+                            }
+                        }
+                    }
+                }else{
+                    Toast.makeText(this,"Las contraseñas no coinciden",Toast.LENGTH_LONG)
+                    //TODO: poner a vacio contrasenias
+                }
+
+            }else{
+                Toast.makeText(this,"Rellena todos lo campos",Toast.LENGTH_LONG)
+            }
 
         }
     }
+
+    private fun getRetrofit(): Retrofit {
+        return Retrofit.Builder().baseUrl("http://192.168.1.41:8080/").addConverterFactory(
+            GsonConverterFactory.create()).build()
+
+    }
+
 
     //Inicializar el dialogo creado en onCreateDialog de la clase DatePickerDialog
     private fun showDatePickerDialog() {
@@ -73,7 +131,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     fun initSpinner() {
-        spSexo = findViewById(R.id.spSexo)
+        spSexo = binding.spSexo//findViewById(R.id.spSexo)
         val list= Sexo.values()
         val adaptador=ArrayAdapter(this,android.R.layout.simple_spinner_item,list)
         spSexo.adapter=adaptador
@@ -94,4 +152,6 @@ class RegisterActivity : AppCompatActivity() {
 
         }
     }
+
+
 }
