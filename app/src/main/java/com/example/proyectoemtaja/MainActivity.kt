@@ -45,11 +45,11 @@ class MainActivity : AppCompatActivity() {
 
         btnMaps = binding.btnMaps
 
-        btnBuscar.setOnClickListener{
+        btnBuscar.setOnClickListener {
             accionBoton()
         }
 
-        btnMaps.setOnClickListener{
+        btnMaps.setOnClickListener {
             startActivity(Intent(this, MapsActivity::class.java))
         }
 
@@ -64,23 +64,26 @@ class MainActivity : AppCompatActivity() {
 
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder().baseUrl("http://192.168.1.41:8080/prueba/").addConverterFactory(
-            GsonConverterFactory.create()).build()
+            GsonConverterFactory.create()
+        ).build()
 
     }
 
-    private fun searchParada(parada:String){
+    private fun searchParada(parada: String) {
 
         CoroutineScope(Dispatchers.IO).launch {
 
-            val call= getRetrofit().create(APIService::class.java).getTimeArrivalBus("consultar/$parada/")
+            val call =
+                getRetrofit().create(APIService::class.java).getTimeArrivalBus("consultar/$parada/")
 
-            if (call.isSuccessful){
+            if (call.isSuccessful) {
 
                 Log.d("Debug", "Entramos a actualizar datos")
 
                 try {
                     val timeArrivalBus = call.body() //exceptioon
-                    var mapa = timeArrivalBus?.data?.get(0)?.arrive?.stream()?.collect(Collectors.groupingBy { it.line })
+                    var mapa = timeArrivalBus?.data?.get(0)?.arrive?.stream()
+                        ?.collect(Collectors.groupingBy { it.line })
 
                     lista.clear()
 
@@ -96,14 +99,13 @@ class MainActivity : AppCompatActivity() {
 
                     Log.d("Debug", "Datos actualizados")
 
-                }catch (e: Exception) {
+                } catch (e: Exception) {
                     Log.e("Error", "Error al actializar datos")
                 }
 
                 Log.d("Debug", "RV actualizados")
-            }
-            else{
-                Log.e("Debug","Error al buscar")
+            } else {
+                Log.e("Debug", "Error al buscar")
             }
 
             runOnUiThread {

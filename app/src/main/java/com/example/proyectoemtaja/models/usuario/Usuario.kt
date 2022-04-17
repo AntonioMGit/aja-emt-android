@@ -3,5 +3,21 @@ package com.example.proyectoemtaja.models.usuario
 import com.google.gson.annotations.SerializedName
 import java.time.LocalDate
 
-class Usuario(@SerializedName("correo") var correo:String,@SerializedName("clave") var clave:String,@SerializedName("nombre") var nombre:String,@SerializedName("apellidos") var apellidos:String,var fechaNacimiento:LocalDate,var sexo:Sexo) {
+class Usuario(
+    @SerializedName("correo")
+    var correo:String,
+
+    @SerializedName("clave")
+    var clave:String,
+
+    @SerializedName("nombre")
+    var nombre:String,
+
+    @SerializedName("apellidos")
+    var apellidos:String,
+
+    var fechaNacimiento:LocalDate,
+
+    var sexo:Sexo
+) {
 }

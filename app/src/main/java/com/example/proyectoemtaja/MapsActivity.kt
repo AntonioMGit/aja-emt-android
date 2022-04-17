@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.example.proyectoemtaja.databinding.ActivityMapsBinding
 import com.example.proyectoemtaja.models.listaParadas.ListaParadas
 import com.example.proyectoemtaja.service.APIService
+import com.example.proyectoemtaja.utilities.Variables
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -65,7 +66,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl("http://192.168.1.41:8080/prueba/").addConverterFactory(
+        return Retrofit.Builder().baseUrl("${Variables.urlBase}/prueba/").addConverterFactory(
             GsonConverterFactory.create()).build()
 
     }
