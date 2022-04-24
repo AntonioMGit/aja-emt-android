@@ -45,6 +45,10 @@ class LoginActivity : AppCompatActivity() {
         //si hay datos loguea con los datos directamente
         buscarDatos()
 
+        binding.btnRegistrarse.setOnClickListener{
+            startActivity(Intent(this, RegisterActivity::class.java))
+        }
+
         binding.btnLogin.setOnClickListener {
 
             if (etContrasenia.text.isNotBlank() && etEmail.text.isNotBlank()) {
