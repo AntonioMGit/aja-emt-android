@@ -1,5 +1,6 @@
 package com.example.proyectoemtaja
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -94,6 +95,17 @@ class RegisterActivity : AppCompatActivity() {
                                     "INSERTADO CORECTAMENTE",
                                     Toast.LENGTH_LONG
                                 )
+
+                                //coge el usuario y la contraseña ENCRIPTADA para evitarse tener que meter el usuario y la contraseña todo el tiempo
+                                //y asi loguear directamente hasta que de al boton de cerrar sesion
+                                val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
+                                val editor = sharedPreferences.edit()
+                                editor.apply{
+                                    putString("email", correo.text.toString())
+                                    putString("pass", MD5.encriptar(password1.text.toString()))
+                                }.apply()
+
+                                //tras insertar el usuario loguea directamente
 
                             } else {
                                 Toast.makeText(
