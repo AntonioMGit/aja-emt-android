@@ -69,7 +69,7 @@ class RegisterActivity : AppCompatActivity() {
         //habria que quitarlo
 
         binding.button.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, FavoritoActivity::class.java))
         }
 
         binding.btnRegistrar.setOnClickListener {
@@ -89,6 +89,9 @@ class RegisterActivity : AppCompatActivity() {
                         )
                         runOnUiThread {
                             if (call.isSuccessful) {
+
+                                //manda a servidor
+                                //servidor hace cosas
 
                                 Toast.makeText(
                                     applicationContext,
@@ -113,7 +116,6 @@ class RegisterActivity : AppCompatActivity() {
                                     "NO SE HA PODIDO HACER LA INSERCION",
                                     Toast.LENGTH_LONG
                                 )
-
                             }
                         }
                     }
@@ -121,11 +123,9 @@ class RegisterActivity : AppCompatActivity() {
                     Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_LONG)
                     limpiarClaves()
                 }
-
             } else {
                 Toast.makeText(this, "Rellena todos lo campos", Toast.LENGTH_LONG)
             }
-
         }
     }
 
@@ -138,7 +138,6 @@ class RegisterActivity : AppCompatActivity() {
         return Retrofit.Builder().baseUrl(Variables.urlBase).addConverterFactory(
             GsonConverterFactory.create()
         ).build()
-
     }
 
 

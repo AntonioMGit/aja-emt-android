@@ -14,6 +14,7 @@ import com.example.proyectoemtaja.databinding.ActivityLoginBinding
 import com.example.proyectoemtaja.models.peticiones.LoginRequest
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.NullOnEmptyConverterFactory
+import com.example.proyectoemtaja.utilities.Variables
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,7 +51,6 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.btnLogin.setOnClickListener {
-
             if (etContrasenia.text.isNotBlank() && etEmail.text.isNotBlank()) {
                 loguear(etContrasenia.text.toString(), etEmail.text.toString())
             } else {
@@ -104,7 +104,7 @@ class LoginActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(
                         this@LoginActivity,
-                        "fallo de conexion",
+                        "Error de conexión",
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -113,7 +113,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl("http://192.168.1.34:8081/")/*.addConverterFactory(
+        return Retrofit.Builder().baseUrl(Variables.urlBase)/*.addConverterFactory(
             NullOnEmptyConverterFactory()
         )*/.addConverterFactory(
             GsonConverterFactory.create()

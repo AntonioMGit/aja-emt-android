@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnMaps: Button
     private lateinit var etParada: EditText
     private lateinit var rvBuses: RecyclerView
+    private lateinit var btnAFav: Button
 
     val lista = ArrayList<Map.Entry<String, List<Arrive>>>()
 
@@ -44,6 +45,12 @@ class MainActivity : AppCompatActivity() {
         rvBuses.adapter = BusParadaAdapter(lista)
 
         btnMaps = binding.btnMaps
+        btnAFav = binding.btnAFav
+
+        var nParada: String? = intent.getStringExtra("nParada")
+
+        if(!nParada.isNullOrEmpty())
+            searchParada(nParada.toString())
 
         btnBuscar.setOnClickListener {
             accionBoton()
@@ -51,6 +58,10 @@ class MainActivity : AppCompatActivity() {
 
         btnMaps.setOnClickListener {
             startActivity(Intent(this, MapsActivity::class.java))
+        }
+
+        btnAFav.setOnClickListener {
+            startActivity(Intent(this, FavoritoActivity::class.java))
         }
 
     }
