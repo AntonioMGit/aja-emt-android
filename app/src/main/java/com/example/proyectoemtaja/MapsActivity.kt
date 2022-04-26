@@ -1,26 +1,26 @@
 package com.example.proyectoemtaja
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.example.proyectoemtaja.databinding.ActivityMapsBinding
+import com.example.proyectoemtaja.models.listaParadas.ListaParadas
+import com.example.proyectoemtaja.service.APIService
+import com.example.proyectoemtaja.utilities.Variables
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.example.proyectoemtaja.databinding.ActivityMapsBinding
-import com.example.proyectoemtaja.models.listaParadas.ListaParadas
-import com.example.proyectoemtaja.service.APIService
-import com.example.proyectoemtaja.utilities.Variables
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.Exception
-import java.util.ArrayList
+
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -62,6 +62,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(madrid,13f))
 
         listarParadas()
+
+        // adding on click listener to marker of google maps.
+        mMap.setOnMarkerClickListener { marker -> // on marker click we are getting the title of our marker
+            // which is clicked and displaying it in a toast message.
+            val titulo = marker.title.toString()
+
+            val cosas : List<String> =  titulo.split("-")
+            Toast.makeText(this@MapsActivity, "Número de parada: ${cosas.get(2).toString()}", Toast.LENGTH_SHORT)
+                .show()
+            var p = cosas.get(2).toString().trim()
+            buscarParada(p)
+
+            true //?¿?
+        }
     }
 
 
@@ -93,7 +107,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         var longitud = cosa?.geometry?.coordinates?.get(0)
 
                         val parada = LatLng(latitud!!,longitud!!)
-                        mMap.addMarker(MarkerOptions().position(parada).title(cosa?.name))
+                        var nParada = cosa?.node.toString()
+                        mMap.addMarker(MarkerOptions().position(parada).title(cosa?.name + " - " + nParada))
+                        //Log.d("Debug", "snippet:" + nParada.toString())
+                        //mMap.addMarker(MarkerOptions().snippet(nParada.toString()))
                     }
                     Log.d("Debug", "Datos actualizados")
 
@@ -107,5 +124,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 Log.e("Debug","Error al buscar")
             }
         }
+    }
+
+    private fun buscarParada(nParada: String?) {
+        val intent = Intent(this,MainActivity::class.java);
+        intent.putExtra("nParada", nParada)
+
+        startActivity(intent);
     }
 }
