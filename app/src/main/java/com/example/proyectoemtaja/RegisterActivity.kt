@@ -75,7 +75,7 @@ class RegisterActivity : AppCompatActivity() {
         binding.btnRegistrar.setOnClickListener {
 
             if (correo.text.isNotBlank() && password1.text.isNotBlank() && password2.text.isNotBlank() && nombre.text.isNotBlank() && apellidos.text.isNotBlank()) {
-                if (password1.text.equals(password2.text)) {
+                if (password1.text.toString().equals(password2.text.toString())) {
                     CoroutineScope(Dispatchers.IO).launch {
                         val call = getRetrofit().create(APIService::class.java).insertUsuario(
                             Usuario(
