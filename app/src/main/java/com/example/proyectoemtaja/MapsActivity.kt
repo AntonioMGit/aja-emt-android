@@ -61,10 +61,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.addMarker(MarkerOptions().position(madrid).title("Madrid"))
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(madrid,13f))
 
+        //mMap.maxZoomLevel(20f)
+
         listarParadas()
 
         // adding on click listener to marker of google maps.
-        mMap.setOnMarkerClickListener { marker -> // on marker click we are getting the title of our marker
+        mMap.setOnInfoWindowClickListener { marker -> // on marker click we are getting the title of our marker
             // which is clicked and displaying it in a toast message.
             val titulo = marker.title.toString()
 
@@ -76,11 +78,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
             true //?¿?
         }
+
+        //mMap.setOnCameraMoveListener { marker ->
+        //    marker.isVisible = mMap.cameraPosition.zoom > 19
+        //}
     }
 
 
     private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl("${Variables.urlBase}/prueba/").addConverterFactory(
+        return Retrofit.Builder().baseUrl("${Variables.urlBase}/controladores-emt/").addConverterFactory(
             GsonConverterFactory.create()).build()
 
     }
@@ -91,9 +97,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             val call= getRetrofit().create(APIService::class.java).getListaParadas("listar-paradas/")
 
             if (call.isSuccessful){
-
-                Log.d("Debug", "Entramos a actualizar datos")
-
+                
                 try {
                     val paradas = call.body() //exceptioon
 
@@ -109,6 +113,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         val parada = LatLng(latitud!!,longitud!!)
                         var nParada = cosa?.node.toString()
                         mMap.addMarker(MarkerOptions().position(parada).title(cosa?.name + " - " + nParada))
+
                         //Log.d("Debug", "snippet:" + nParada.toString())
                         //mMap.addMarker(MarkerOptions().snippet(nParada.toString()))
                     }
