@@ -70,10 +70,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             // which is clicked and displaying it in a toast message.
             val titulo = marker.title.toString()
 
-            val cosas : List<String> =  titulo.split("-")
-            Toast.makeText(this@MapsActivity, "Número de parada: ${cosas.get(2).toString()}", Toast.LENGTH_SHORT)
+            val cosas : List<String> =  titulo.split(" - ")
+            Toast.makeText(this@MapsActivity, "Número de parada: ${cosas.get(1).toString()}", Toast.LENGTH_SHORT)
                 .show()
-            var p = cosas.get(2).toString().trim()
+            var p = cosas.get(1).toString().trim()
             buscarParada(p)
 
             true //?¿?
@@ -112,7 +112,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                         val parada = LatLng(latitud!!,longitud!!)
                         var nParada = cosa?.node.toString()
-                        mMap.addMarker(MarkerOptions().position(parada).title(cosa?.name + " - " + nParada))
+                        mMap.addMarker(
+                            MarkerOptions().position(parada).
+                                title(cosa?.name+ " - " + nParada).
+                                snippet("Pulsa para ver información.")
+                        )
+
 
                         //Log.d("Debug", "snippet:" + nParada.toString())
                         //mMap.addMarker(MarkerOptions().snippet(nParada.toString()))
