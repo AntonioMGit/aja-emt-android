@@ -72,6 +72,10 @@ class RegisterActivity : AppCompatActivity() {
             startActivity(Intent(this, FavoritoActivity::class.java))
         }
 
+        binding.btnVolverLogin.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+
         binding.btnRegistrar.setOnClickListener {
 
             if (correo.text.isNotBlank() && password1.text.isNotBlank() && password2.text.isNotBlank() && nombre.text.isNotBlank() && apellidos.text.isNotBlank()) {
