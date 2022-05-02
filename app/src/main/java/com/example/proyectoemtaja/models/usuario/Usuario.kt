@@ -15,8 +15,8 @@ class Usuario(
 
     @SerializedName("apellidos")
     var apellidos:String,
-
-    var fechaNacimiento:LocalDate,
+    @SerializedName("fechaNacimiento")
+    var fechaNacimiento:String,
 
     var sexo:Sexo
 ) {

@@ -13,6 +13,7 @@ import com.example.proyectoemtaja.models.usuario.Sexo
 import com.example.proyectoemtaja.models.usuario.Usuario
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Variables
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -83,10 +84,11 @@ class RegisterActivity : AppCompatActivity() {
                                 MD5.encriptar(password1.text.toString()),
                                 nombre.text.toString(),
                                 apellidos.text.toString(),
-                                LocalDate.now(),
+                                LocalDate.now().toString(),
                                 sexo
                             )
                         )
+
                         runOnUiThread {
                             if (call.isSuccessful) {
 
@@ -135,8 +137,10 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun getRetrofit(): Retrofit {
+
+       // val gson = GsonBuilder().setDateFormat("yyyy-MM-dd").create()
         return Retrofit.Builder().baseUrl(Variables.urlBase).addConverterFactory(
-            GsonConverterFactory.create()
+            GsonConverterFactory.create(/*gson*/)
         ).build()
     }
 
@@ -181,3 +185,4 @@ class RegisterActivity : AppCompatActivity() {
 
 
 }
+
