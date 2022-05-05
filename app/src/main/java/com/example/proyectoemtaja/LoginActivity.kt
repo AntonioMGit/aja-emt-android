@@ -99,6 +99,8 @@ class LoginActivity : AppCompatActivity() {
                     editor.apply{
                         putString("email", email)
                         putString("pass", MD5.encriptar(pass))
+                        putString("accessToken", call.body()?.token.toString())
+                        putString("refreshToken", call.body()?.token.toString())
                     }.apply()
 
                 } else {

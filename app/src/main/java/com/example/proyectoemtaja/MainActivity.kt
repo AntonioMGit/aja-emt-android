@@ -1,5 +1,6 @@
 package com.example.proyectoemtaja
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -84,9 +85,9 @@ class MainActivity : AppCompatActivity() {
     private fun searchParada(parada: String) {
 
         CoroutineScope(Dispatchers.IO).launch {
-
+            val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
             val call =
-                getRetrofit().create(APIService::class.java).getTimeArrivalBus("consultar-parada/$parada/")
+                getRetrofit().create(APIService::class.java).getTimeArrivalBus("consultar-parada/$parada/","Bearer "+sharedPreferences.getString("accessToken").toString())
 
             if (call.isSuccessful) {
 
@@ -128,3 +129,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 }
+
+
+
+
+
+

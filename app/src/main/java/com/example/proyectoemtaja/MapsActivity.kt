@@ -1,5 +1,6 @@
 package com.example.proyectoemtaja
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -93,8 +94,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun listarParadas(){
 
         CoroutineScope(Dispatchers.Main).launch {
-
-            val call= getRetrofit().create(APIService::class.java).getListaParadas("listar-paradas/")
+            val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
+            val call= getRetrofit().create(APIService::class.java).getListaParadas("listar-paradas/","Bearer "+sharedPreferences.getString("accessToken").toString())
 
             if (call.isSuccessful){
                 

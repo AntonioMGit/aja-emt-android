@@ -13,9 +13,9 @@ import retrofit2.http.*
 interface APIService {
 
     @GET
-    suspend fun getTimeArrivalBus(@Url url:String): Response<TimeArrivalBus>
+    suspend fun getTimeArrivalBus(@Url url:String,@Header("Authorization")token:String): Response<TimeArrivalBus>
     @GET
-    suspend fun getListaParadas(@Url url:String): Response<ListaParadas>
+    suspend fun getListaParadas(@Url url:String ,@Header("Authorization")token:String): Response<ListaParadas>
    // @POST("/login")
 
     @POST("usuario/insertar/")
