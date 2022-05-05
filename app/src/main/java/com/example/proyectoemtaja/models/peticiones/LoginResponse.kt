@@ -5,9 +5,9 @@ import java.time.LocalDate
 
 
 data class LoginResponse (
-    @SerializedName("token")
+    @SerializedName("accessToken")
     var token: String,
 
-    @SerializedName("fechaMaxima")
-    var fechaMaxima: LocalDate
+    @SerializedName("refreshToken")
+    var fechaMaxima: String
 )

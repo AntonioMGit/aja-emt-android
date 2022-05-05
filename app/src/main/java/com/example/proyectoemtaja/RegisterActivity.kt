@@ -85,7 +85,7 @@ class RegisterActivity : AppCompatActivity() {
                         val call = getRetrofit().create(APIService::class.java).insertUsuario(
                             Usuario(
                                 correo.text.toString(),
-                                MD5.encriptar(password1.text.toString()),
+                                password1.text.toString(),
                                 nombre.text.toString(),
                                 apellidos.text.toString(),
                                 LocalDate.now().toString(),

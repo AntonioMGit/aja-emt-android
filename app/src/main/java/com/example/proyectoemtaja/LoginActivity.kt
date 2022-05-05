@@ -83,8 +83,8 @@ class LoginActivity : AppCompatActivity() {
                 .build()
             */
 
-            var call = getRetrofit().create(APIService::class.java)
-                .login(LoginRequest(email, pass))
+           var call = getRetrofit().create(APIService::class.java)
+                .login(email, pass)
 
             runOnUiThread {
                 if (call.isSuccessful) {
