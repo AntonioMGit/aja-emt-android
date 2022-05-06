@@ -103,7 +103,7 @@ class RegisterActivity : AppCompatActivity() {
                                     applicationContext,
                                     "INSERTADO CORECTAMENTE",
                                     Toast.LENGTH_LONG
-                                )
+                                ).show()
 
                                 //coge el usuario y la contraseña ENCRIPTADA para evitarse tener que meter el usuario y la contraseña todo el tiempo
                                 //y asi loguear directamente hasta que de al boton de cerrar sesion
@@ -115,18 +115,19 @@ class RegisterActivity : AppCompatActivity() {
                                 }.apply()
 
                                 //tras insertar el usuario loguea directamente
+                                startActivity(Intent(applicationContext, FavoritoActivity::class.java))
 
                             } else {
                                 Toast.makeText(
                                     applicationContext,
                                     "NO SE HA PODIDO HACER LA INSERCION",
                                     Toast.LENGTH_LONG
-                                )
+                                ).show()
                             }
                         }
                     }
                 } else {
-                    Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_LONG)
+                    Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_LONG).show()
                     limpiarClaves()
                 }
             } else {

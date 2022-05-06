@@ -95,7 +95,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         CoroutineScope(Dispatchers.Main).launch {
             val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
-            val call= getRetrofit().create(APIService::class.java).getListaParadas("listar-paradas/","Bearer "+sharedPreferences.getString("accessToken").toString())
+            val call= getRetrofit().create(APIService::class.java).getListaParadas("listar-paradas/","Bearer "+sharedPreferences.getString("accessToken","").toString())
 
             if (call.isSuccessful){
                 

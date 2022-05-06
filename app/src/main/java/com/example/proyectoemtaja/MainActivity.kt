@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
             val call =
-                getRetrofit().create(APIService::class.java).getTimeArrivalBus("consultar-parada/$parada/","Bearer "+sharedPreferences.getString("accessToken").toString())
+                getRetrofit().create(APIService::class.java).getTimeArrivalBus("consultar-parada/$parada/","Bearer "+sharedPreferences.getString("accessToken", "").toString())
 
             if (call.isSuccessful) {
 
