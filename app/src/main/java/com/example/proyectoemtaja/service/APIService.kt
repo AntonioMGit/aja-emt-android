@@ -24,7 +24,7 @@ interface APIService {
     @POST("usuario/login")
     @FormUrlEncoded
 
-    suspend fun  login(@Field("correo") user:String,@Field("password") password:String/*@Body request:LoginRequest*/ ): Response<LoginResponse>
+    suspend fun  login(@Field("correo") user:String,@Field("clave") password:String/*@Body request:LoginRequest*/ ): Response<LoginResponse>
   //@Body login:LoginRequest
    // @FieldMap params:Map<String,String>
     //@Field("user") user:String,@Field("password") password:String

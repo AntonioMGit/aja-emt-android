@@ -52,7 +52,7 @@ class LoginActivity : AppCompatActivity() {
 
         binding.btnLogin.setOnClickListener {
             if (etContrasenia.text.isNotBlank() && etEmail.text.isNotBlank()) {
-                loguear(etContrasenia.text.toString(), etEmail.text.toString())
+                loguear(etEmail.text.toString(),  MD5.encriptar(etContrasenia.text.toString()))
             } else {
                 Toast.makeText(this, "Faltan campos por rellenar.", Toast.LENGTH_LONG).show()
             }
@@ -68,7 +68,6 @@ class LoginActivity : AppCompatActivity() {
             if (emailGuardado != null) { //sino no deja¿?¿?
                 if (passGuardada != null) { //sino no deja¿?¿?
                     loguear(emailGuardado, passGuardada)
-                    Toast.makeText(applicationContext, "Bienvenido " + emailGuardado, Toast.LENGTH_SHORT).show()
                     //QUITAR
                     Toast.makeText(applicationContext, "Bearer " + sharedPreferences.getString("accessToken", ""), Toast.LENGTH_LONG).show()
                 }
@@ -76,7 +75,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun loguear(pass: String, email: String) {
+    private fun loguear(email: String, pass: String) {
         CoroutineScope(Dispatchers.IO).launch {
             /*var request :RequestBody= MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -90,20 +89,29 @@ class LoginActivity : AppCompatActivity() {
 
             runOnUiThread {
                 if (call.isSuccessful) {
-                    textview.text = call.body().toString()
 
-                    //hace lo que tenga que hacer con el servidor
+                    if(call.code() == 200) {
+                        textview.text = call.body().toString()
 
-                    //coge el usuario y la contraseña ENCRIPTADA para evitarse tener que meter el usuario y la contraseña todo el tiempo
-                    //y asi loguear directamente hasta que de al boton de cerrar sesion
-                    val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
-                    val editor = sharedPreferences.edit()
-                    editor.apply{
-                        putString("email", email)
-                        putString("pass", MD5.encriptar(pass))
-                        putString("accessToken", call.body()?.token.toString())
-                        putString("refreshToken", call.body()?.token.toString())
-                    }.apply()
+                        //hace lo que tenga que hacer con el servidor
+
+                        //coge el usuario y la contraseña ENCRIPTADA para evitarse tener que meter el usuario y la contraseña todo el tiempo
+                        //y asi loguear directamente hasta que de al boton de cerrar sesion
+                        val sharedPreferences =
+                            getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
+                        val editor = sharedPreferences.edit()
+                        editor.apply {
+                            putString("email", email)
+                            putString("pass", MD5.encriptar(pass))
+                            putString("accessToken", call.body()?.token.toString())
+                            putString("refreshToken", call.body()?.token.toString())
+                        }.apply()
+
+                        Toast.makeText(applicationContext, "Bienvenido " + email, Toast.LENGTH_SHORT).show()
+
+                    }else{
+                        Toast.makeText(applicationContext, "Usuario o contraseña no válidos", Toast.LENGTH_SHORT).show()
+                    }
 
                 } else {
                     Toast.makeText(
