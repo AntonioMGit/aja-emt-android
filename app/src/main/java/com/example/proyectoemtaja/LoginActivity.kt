@@ -69,6 +69,8 @@ class LoginActivity : AppCompatActivity() {
                 if (passGuardada != null) { //sino no deja¿?¿?
                     loguear(emailGuardado, passGuardada)
                     Toast.makeText(applicationContext, "Bienvenido " + emailGuardado, Toast.LENGTH_SHORT).show()
+                    //QUITAR
+                    Toast.makeText(applicationContext, "Bearer " + sharedPreferences.getString("accessToken", ""), Toast.LENGTH_LONG).show()
                 }
             }
         }

@@ -85,7 +85,7 @@ class RegisterActivity : AppCompatActivity() {
                         val call = getRetrofit().create(APIService::class.java).insertUsuario(
                             Usuario(
                                 correo.text.toString(),
-                                password1.text.toString(),
+                                MD5.encriptar(password1.text.toString()),
                                 nombre.text.toString(),
                                 apellidos.text.toString(),
                                 LocalDate.now().toString(),
@@ -101,7 +101,7 @@ class RegisterActivity : AppCompatActivity() {
 
                                 Toast.makeText(
                                     applicationContext,
-                                    "INSERTADO CORECTAMENTE",
+                                    "Insertado correctamente.",
                                     Toast.LENGTH_LONG
                                 ).show()
 
@@ -114,15 +114,33 @@ class RegisterActivity : AppCompatActivity() {
                                     putString("pass", MD5.encriptar(password1.text.toString()))
                                 }.apply()
 
-                                //tras insertar el usuario loguea directamente
-                                startActivity(Intent(applicationContext, FavoritoActivity::class.java))
-
-                            } else {
+                                //QUITAR
                                 Toast.makeText(
                                     applicationContext,
-                                    "NO SE HA PODIDO HACER LA INSERCION",
+                                    MD5.encriptar(password1.text.toString()) +"",
                                     Toast.LENGTH_LONG
                                 ).show()
+
+                                //tras insertar el usuario loguea directamente
+                                //DESCOMENTAR LA LINEA DE ABAJO
+                                //startActivity(Intent(applicationContext, FavoritoActivity::class.java))
+
+                            } else {
+                                var codigoError = call.code()
+
+                                if(codigoError == 400){ //error 400 lo tira el servidor cuando ya esta insertado ese usuario.
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "El usuario ya exite.",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }else{ //si tira otro por la razon que sea
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "No se ha podido realizar la inserción",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             }
                         }
                     }
