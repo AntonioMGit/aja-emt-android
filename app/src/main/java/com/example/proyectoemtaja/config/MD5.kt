@@ -12,7 +12,7 @@ object MD5 {
      * @return password encriptada
      */
     fun encriptar(input: String): String {
-        var hashtext: String =""
+        var hashtext: String = ""
         try {
             val md = MessageDigest.getInstance("MD5")
             val messageDigest = md.digest(input.toByteArray())

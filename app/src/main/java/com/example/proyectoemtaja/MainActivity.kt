@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.databinding.ActivityMainBinding
-import com.example.proyectoemtaja.models.TimeArrival.Arrive
+import com.example.proyectoemtaja.models.timeArrival.Arrive
 import com.example.proyectoemtaja.utilities.Variables
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
         var nParada: String? = intent.getStringExtra("nParada")
 
-        if(!nParada.isNullOrEmpty())
+        if (!nParada.isNullOrEmpty())
             searchParada(nParada.toString())
 
         btnBuscar.setOnClickListener {
@@ -76,9 +76,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl(Variables.urlBase + "/controladores-emt/").addConverterFactory(
-            GsonConverterFactory.create()
-        ).build()
+        return Retrofit.Builder().baseUrl(Variables.URL_BASE + "/controladores-emt/")
+            .addConverterFactory(
+                GsonConverterFactory.create()
+            ).build()
 
     }
 
@@ -87,7 +88,10 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
             val call =
-                getRetrofit().create(APIService::class.java).getTimeArrivalBus("consultar-parada/$parada/","Bearer "+sharedPreferences.getString("accessToken", "").toString())
+                getRetrofit().create(APIService::class.java).getTimeArrivalBus(
+                    "consultar-parada/$parada/",
+                    "Bearer " + sharedPreferences.getString("accessToken", "").toString()
+                )
 
             if (call.isSuccessful) {
 

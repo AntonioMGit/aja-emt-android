@@ -1,8 +1,8 @@
-package com.example.proyectoemtaja.models.TimeArrival
+package com.example.proyectoemtaja.models.timeArrival
 
 import com.google.gson.annotations.SerializedName
 
-data class MoreInfo (
+data class MoreInfo(
     @SerializedName(value = "@url")
     val url: String,
 
@@ -11,6 +11,6 @@ data class MoreInfo (
 
     @SerializedName(value = "@length")
     val length: String
-    ){
+) {
 
 }

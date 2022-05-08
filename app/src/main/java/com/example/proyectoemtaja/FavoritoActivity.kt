@@ -23,11 +23,11 @@ class FavoritoActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         btnBuscarParadaFav = binding.btnBuscarParadaFav
-        etNumParadaFav =  binding.etNumParadaFav
+        etNumParadaFav = binding.etNumParadaFav
 
         btnBuscarParadaFav.setOnClickListener {
 
-            val intent = Intent(this,MainActivity::class.java);
+            val intent = Intent(this, MainActivity::class.java);
             var nParada = etNumParadaFav.text.toString()
             intent.putExtra("nParada", nParada)
 

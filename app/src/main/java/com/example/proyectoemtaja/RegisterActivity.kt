@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import com.example.proyectoemtaja.config.MD5
@@ -13,15 +12,17 @@ import com.example.proyectoemtaja.models.usuario.Sexo
 import com.example.proyectoemtaja.models.usuario.Usuario
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Variables
-import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class RegisterActivity : AppCompatActivity() {
+
+    val FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     private lateinit var spSexo: Spinner
 
@@ -36,35 +37,24 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var apellidos: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         initSpinner()
-
-        etFechaNacimiento = binding.etFechaNacimiento//findViewById(R.id.etFechaNacimiento)
+        etFechaNacimiento = binding.etFechaNacimiento
 
         correo = binding.etCorreo
         password1 = binding.etPassword
         password2 = binding.etPassword2
         nombre = binding.etNombre
         apellidos = binding.etApellidos
-/*
-        ArrayAdapter.createFromResource(
-            this,
-            R.array.sexo,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            // Specify the layout to use when the list of choices appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner
-            spSexo.adapter = adapter
-        }
-*/
-        //fechaSeleccionada = LocalDate.now()
 
         //Listener de la fecha
-        etFechaNacimiento.setOnClickListener { showDatePickerDialog() }
+        etFechaNacimiento.setOnClickListener {
+            showDatePickerDialog()
+        }
 
         //lo pongo para probar que lo demas funciona
         //habria que quitarlo
@@ -77,79 +67,74 @@ class RegisterActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
-        binding.btnRegistrar.setOnClickListener {
+        binding.btnRegistrar.setOnClickListener { registrar ()}
+    }
 
-            if (correo.text.isNotBlank() && password1.text.isNotBlank() && password2.text.isNotBlank() && nombre.text.isNotBlank() && apellidos.text.isNotBlank()) {
-                if (password1.text.toString() == password2.text.toString()) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val call = getRetrofit().create(APIService::class.java).insertUsuario(
-                            Usuario(
-                                correo = correo.text.toString(),
-                                clave = MD5.encriptar(password1.text.toString()),
-                                nombre = nombre.text.toString(),
-                                apellidos = apellidos.text.toString(),
-                                fechaNacimiento = etFechaNacimiento.text.toString(),
-                                sexo = sexo
-                            )
-                        )
-
-                        runOnUiThread {
-                            if (call.isSuccessful) {
-
-                                //manda a servidor
-                                //servidor hace cosas
-
-                                Toast.makeText(
-                                    applicationContext,
-                                    "Insertado correctamente.",
-                                    Toast.LENGTH_LONG
-                                ).show()
-
-                                //coge el usuario y la contraseña ENCRIPTADA para evitarse tener que meter el usuario y la contraseña todo el tiempo
-                                //y asi loguear directamente hasta que de al boton de cerrar sesion
-                                val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
-                                val editor = sharedPreferences.edit()
-                                editor.apply{
-                                    putString("email", correo.text.toString())
-                                    putString("pass", MD5.encriptar(password1.text.toString()))
-                                }.apply()
-
-                                //QUITAR
-                                Toast.makeText(
-                                    applicationContext,
-                                    MD5.encriptar(password1.text.toString()) +"",
-                                    Toast.LENGTH_LONG
-                                ).show()
-
-                                //tras insertar el usuario loguea directamente
-                                //DESCOMENTAR LA LINEA DE ABAJO
-                                //startActivity(Intent(applicationContext, FavoritoActivity::class.java))
-
-                            } else {
-                                var codigoError = call.code()
-
-                                if(codigoError == 400){ //error 400 lo tira el servidor cuando ya esta insertado ese usuario.
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "El usuario ya exite.",
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                }else{ //si tira otro por la razon que sea
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "No se ha podido realizar la inserción",
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_LONG).show()
-                    limpiarClaves()
-                }
+    private fun registrar() {
+        if (correo.text.isNotBlank() && password1.text.isNotBlank() && password2.text.isNotBlank() && nombre.text.isNotBlank() && apellidos.text.isNotBlank()) {
+            if (password1.text.toString() == password2.text.toString()) {
+                sendRequest()
             } else {
-                Toast.makeText(this, "Rellena todos lo campos", Toast.LENGTH_LONG)
+                Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_LONG).show()
+                limpiarClaves()
+            }
+        } else {
+            Toast.makeText(this, "Rellena todos lo campos", Toast.LENGTH_LONG)
+        }
+    }
+
+    private fun sendRequest() {
+        CoroutineScope(Dispatchers.IO).launch {
+
+            //Request
+            val call = getRetrofit().create(APIService::class.java).insertUsuario(
+                Usuario(correo = correo.text.toString(), clave = MD5.encriptar(password1.text.toString()),
+                    nombre = nombre.text.toString(), apellidos = apellidos.text.toString(),
+                    fechaNacimiento = etFechaNacimiento.text.toString(), sexo = sexo
+                )
+            )
+
+            runOnUiThread {
+                if (call.isSuccessful) {
+                    Toast.makeText(applicationContext,"Insertado correctamente.", Toast.LENGTH_LONG).show()
+
+                    //coge el usuario y la contraseña ENCRIPTADA para evitarse tener que meter el usuario y la contraseña all t tiempo
+                    //y asi loguear directamente hasta que de al boton de cerrar sesion
+                    val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.apply {
+                        putString("email", correo.text.toString())
+                        putString("pass", MD5.encriptar(password1.text.toString()))
+                    }.apply()
+
+                    //QUITAR
+                    Toast.makeText(
+                        applicationContext,
+                        MD5.encriptar(password1.text.toString()) + "",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    //tras insertar el usuario loguea directamente
+                    //DESCOMENTAR LA LINEA DE ABAJO
+                    //startActivity(Intent(applicationContext, FavoritoActivity::class.java))
+
+                } else {
+                    var codigoError = call.code()
+
+                    if (codigoError == 400) { //error 400 lo tira el servidor cuando ya esta insertado ese usuario.
+                        Toast.makeText(
+                            applicationContext,
+                            "El usuario ya exite.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else { //si tira otro por la razon que sea
+                        Toast.makeText(
+                            applicationContext,
+                            "No se ha podido realizar la inserción",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
             }
         }
     }
@@ -161,8 +146,8 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun getRetrofit(): Retrofit {
 
-       // val gson = GsonBuilder().setDateFormat("yyyy-MM-dd").create()
-        return Retrofit.Builder().baseUrl(Variables.urlBase).addConverterFactory(
+        // val gson = GsonBuilder().setDateFormat("yyyy-MM-dd").create()
+        return Retrofit.Builder().baseUrl(Variables.URL_BASE).addConverterFactory(
             GsonConverterFactory.create(/*gson*/)
         ).build()
     }
@@ -177,10 +162,11 @@ class RegisterActivity : AppCompatActivity() {
 
     //Funcion que se le pasa a DatePickerDialog al crearlo. Cuando ya se ha seleccionado una fecha, se llama a este metodo
     private fun onDateSelected(day: Int, month: Int, year: Int) {
-        etFechaNacimiento.setText("$day/" + (month + 1) + "/$year")
-        fechaSeleccionada = LocalDate.of(year, (month + 1), day)
 
-        Toast.makeText(this, "Fecha: ${fechaSeleccionada.toString()}", Toast.LENGTH_LONG).show()
+        fechaSeleccionada = LocalDate.of(year, (month + 1), day)
+        etFechaNacimiento.setText(fechaSeleccionada.format(FORMATO_FECHA).toString())
+
+        Toast.makeText(this, "Fecha: ${fechaSeleccionada.format(FORMATO_FECHA).toString()}", Toast.LENGTH_LONG).show()
     }
 
     private fun initSpinner() {

@@ -57,10 +57,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         //datos centro de madrid
         var latitud = 40.4165
         var longitud = -3.70256
-        val madrid = LatLng(latitud,longitud)
+        val madrid = LatLng(latitud, longitud)
 
         mMap.addMarker(MarkerOptions().position(madrid).title("Madrid"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(madrid,13f))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(madrid, 13f))
 
         //mMap.maxZoomLevel(20f)
 
@@ -71,8 +71,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             // which is clicked and displaying it in a toast message.
             val titulo = marker.title.toString()
 
-            val cosas : List<String> =  titulo.split(" - ")
-            Toast.makeText(this@MapsActivity, "Número de parada: ${cosas.get(1).toString()}", Toast.LENGTH_SHORT)
+            val cosas: List<String> = titulo.split(" - ")
+            Toast.makeText(
+                this@MapsActivity,
+                "Número de parada: ${cosas.get(1).toString()}",
+                Toast.LENGTH_SHORT
+            )
                 .show()
             var p = cosas.get(1).toString().trim()
             buscarParada(p)
@@ -87,22 +91,28 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl("${Variables.urlBase}/controladores-emt/").addConverterFactory(
-            GsonConverterFactory.create()).build()
+        return Retrofit.Builder().baseUrl("${Variables.URL_BASE}/controladores-emt/")
+            .addConverterFactory(
+                GsonConverterFactory.create()
+            ).build()
 
     }
-    private fun listarParadas(){
+
+    private fun listarParadas() {
 
         CoroutineScope(Dispatchers.Main).launch {
             val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
-            val call= getRetrofit().create(APIService::class.java).getListaParadas("listar-paradas/","Bearer "+ sharedPreferences.getString("accessToken", "").toString())
+            val call = getRetrofit().create(APIService::class.java).getListaParadas(
+                "listar-paradas/",
+                "Bearer " + sharedPreferences.getString("accessToken", "").toString()
+            )
 
-            if (call.isSuccessful){
-                
+            if (call.isSuccessful) {
+
                 try {
                     val paradas = call.body() //exceptioon
 
-                    for (i in 0..9){ //prueba con los 9 primeros
+                    for (i in 0..9) { //prueba con los 9 primeros
                         var cosa = paradas?.data?.get(i)
 
                         Log.d("Debug", i.toString() + ": " + cosa.toString())
@@ -110,12 +120,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         var latitud = cosa?.geometry?.coordinates?.get(1)
                         var longitud = cosa?.geometry?.coordinates?.get(0)
 
-                        val parada = LatLng(latitud!!,longitud!!)
+                        val parada = LatLng(latitud!!, longitud!!)
                         var nParada = cosa?.node.toString()
                         mMap.addMarker(
-                            MarkerOptions().position(parada).
-                                title(cosa?.name+ " - " + nParada).
-                                snippet("Pulsa para ver información.")
+                            MarkerOptions().position(parada).title(cosa?.name + " - " + nParada)
+                                .snippet("Pulsa para ver información.")
                         )
 
 
@@ -124,20 +133,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
                     Log.d("Debug", "Datos actualizados")
 
-                }catch (e: Exception) {
+                } catch (e: Exception) {
                     Log.e("Error", "Error al actializar datos")
                     Log.e("Error", e.stackTraceToString())
                 }
                 Log.d("Debug", "RV actualizados")
-            }
-            else{
-                Log.e("Debug","Error al buscar")
+            } else {
+                Log.e("Debug", "Error al buscar")
             }
         }
     }
 
     private fun buscarParada(nParada: String?) {
-        val intent = Intent(this,MainActivity::class.java);
+        val intent = Intent(this, MainActivity::class.java);
         intent.putExtra("nParada", nParada)
 
         startActivity(intent);

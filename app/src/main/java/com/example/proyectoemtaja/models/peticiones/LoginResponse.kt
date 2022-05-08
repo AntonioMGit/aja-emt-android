@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import java.time.LocalDate
 
 
-data class LoginResponse (
+data class LoginResponse(
     @SerializedName("accessToken")
     var token: String,
 

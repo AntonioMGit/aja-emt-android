@@ -1,18 +1,19 @@
-package com.example.proyectoemtaja.models.TimeArrival
+package com.example.proyectoemtaja.models.timeArrival
 
 import com.google.gson.annotations.SerializedName
 
 data class StopInfo(
-    var label:String,
+    var label: String,
 
     @SerializedName("StopLines")
     var stopLines: StopLines,
 
     @SerializedName("Description")
-    var description:String,
+    var description: String,
 
-    var geometry : Point,
+    var geometry: Point,
 
     @SerializedName("Direction")
-    var direction:String) {
+    var direction: String
+) {
 }

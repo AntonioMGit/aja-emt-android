@@ -1,4 +1,4 @@
-package com.example.proyectoemtaja.models.TimeArrival
+package com.example.proyectoemtaja.models.timeArrival
 
 data class IncidentData(
     val title: String,
