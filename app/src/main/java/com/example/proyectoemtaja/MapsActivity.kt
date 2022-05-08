@@ -95,14 +95,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         CoroutineScope(Dispatchers.Main).launch {
             val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
-            val call= getRetrofit().create(APIService::class.java).getListaParadas("listar-paradas/","Bearer "+sharedPreferences.getString("accessToken","").toString())
+            val call= getRetrofit().create(APIService::class.java).getListaParadas("listar-paradas/","Bearer "+ sharedPreferences.getString("accessToken", "").toString())
 
             if (call.isSuccessful){
                 
                 try {
                     val paradas = call.body() //exceptioon
 
-                    var i = 0
                     for (i in 0..9){ //prueba con los 9 primeros
                         var cosa = paradas?.data?.get(i)
 

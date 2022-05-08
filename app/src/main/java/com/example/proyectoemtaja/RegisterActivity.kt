@@ -80,16 +80,16 @@ class RegisterActivity : AppCompatActivity() {
         binding.btnRegistrar.setOnClickListener {
 
             if (correo.text.isNotBlank() && password1.text.isNotBlank() && password2.text.isNotBlank() && nombre.text.isNotBlank() && apellidos.text.isNotBlank()) {
-                if (password1.text.toString().equals(password2.text.toString())) {
+                if (password1.text.toString() == password2.text.toString()) {
                     CoroutineScope(Dispatchers.IO).launch {
                         val call = getRetrofit().create(APIService::class.java).insertUsuario(
                             Usuario(
-                                correo.text.toString(),
-                                MD5.encriptar(password1.text.toString()),
-                                nombre.text.toString(),
-                                apellidos.text.toString(),
-                                LocalDate.now().toString(),
-                                sexo
+                                correo = correo.text.toString(),
+                                clave = MD5.encriptar(password1.text.toString()),
+                                nombre = nombre.text.toString(),
+                                apellidos = apellidos.text.toString(),
+                                fechaNacimiento = etFechaNacimiento.text.toString(),
+                                sexo = sexo
                             )
                         )
 
@@ -180,10 +180,10 @@ class RegisterActivity : AppCompatActivity() {
         etFechaNacimiento.setText("$day/" + (month + 1) + "/$year")
         fechaSeleccionada = LocalDate.of(year, (month + 1), day)
 
-        Toast.makeText(this, "Fecha: " + etFechaNacimiento.text, Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Fecha: ${fechaSeleccionada.toString()}", Toast.LENGTH_LONG).show()
     }
 
-    fun initSpinner() {
+    private fun initSpinner() {
         spSexo = binding.spSexo//findViewById(R.id.spSexo)
         val list = Sexo.values()
         val adaptador = ArrayAdapter(this, android.R.layout.simple_spinner_item, list)

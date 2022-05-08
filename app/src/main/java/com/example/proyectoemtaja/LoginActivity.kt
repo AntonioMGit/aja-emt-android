@@ -53,6 +53,7 @@ class LoginActivity : AppCompatActivity() {
         binding.btnLogin.setOnClickListener {
             if (etContrasenia.text.isNotBlank() && etEmail.text.isNotBlank()) {
                 loguear(etEmail.text.toString(),  MD5.encriptar(etContrasenia.text.toString()))
+
             } else {
                 Toast.makeText(this, "Faltan campos por rellenar.", Toast.LENGTH_LONG).show()
             }
@@ -84,11 +85,10 @@ class LoginActivity : AppCompatActivity() {
                 .build()
             */
 
-           var call = getRetrofit().create(APIService::class.java)
+           val call = getRetrofit().create(APIService::class.java)
                 .login(email, pass)
-
-            runOnUiThread {
-                if (call.isSuccessful) {
+           runOnUiThread {
+               if (call.isSuccessful) {
 
                     if(call.code() == 200) {
                         textview.text = call.body().toString()
@@ -107,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
                             putString("refreshToken", call.body()?.token.toString())
                         }.apply()
 
-                        Toast.makeText(applicationContext, "Bienvenido " + email, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, "Bienvenido $email", Toast.LENGTH_SHORT).show()
 
                     }else{
                         Toast.makeText(applicationContext, "Usuario o contraseña no válidos", Toast.LENGTH_SHORT).show()

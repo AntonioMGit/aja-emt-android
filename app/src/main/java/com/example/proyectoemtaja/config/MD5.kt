@@ -18,7 +18,7 @@ object MD5 {
             val messageDigest = md.digest(input.toByteArray())
             val number = BigInteger(1, messageDigest)
             hashtext = number.toString(16)
-            while (hashtext!!.length < 32) {
+            while (hashtext.length < 32) {
                 hashtext = "0$hashtext"
             }
         } catch (e: NoSuchAlgorithmException) {
