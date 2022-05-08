@@ -7,4 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <!--emt-->
+    <color name="pantone_285C">#0072CE</color>
+    <color name="pantone_286C">#0033A0</color>
 </resources>
