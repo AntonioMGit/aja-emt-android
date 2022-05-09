@@ -12,6 +12,7 @@ import com.example.proyectoemtaja.models.usuario.Sexo
 import com.example.proyectoemtaja.models.usuario.Usuario
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Variables
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,15 +27,15 @@ class RegisterActivity : AppCompatActivity() {
 
     private lateinit var spSexo: Spinner
 
-    private lateinit var etFechaNacimiento: EditText
+    private lateinit var etFechaNacimiento: TextInputLayout
     private lateinit var sexo: Sexo
     private lateinit var fechaSeleccionada: LocalDate
     private lateinit var binding: ActivityRegisterBinding
-    private lateinit var correo: EditText
-    private lateinit var password1: EditText
-    private lateinit var password2: EditText
-    private lateinit var nombre: EditText
-    private lateinit var apellidos: EditText
+    private lateinit var correo: TextInputLayout
+    private lateinit var password1: TextInputLayout
+    private lateinit var password2: TextInputLayout
+    private lateinit var nombre: TextInputLayout
+    private lateinit var apellidos: TextInputLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -71,8 +72,8 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun registrar() {
-        if (correo.text.isNotBlank() && password1.text.isNotBlank() && password2.text.isNotBlank() && nombre.text.isNotBlank() && apellidos.text.isNotBlank()) {
-            if (password1.text.toString() == password2.text.toString()) {
+        if (correo.editText!!.text.isNotBlank() && password1.editText!!.text.isNotBlank() && password2.editText!!.text.isNotBlank() && nombre.editText!!.text.isNotBlank() && apellidos.editText!!.text.isNotBlank()) {
+            if (password1.editText!!.text.toString() == password2.editText!!.text.toString()) {
                 sendRequest()
             } else {
                 Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_LONG).show()
@@ -88,9 +89,9 @@ class RegisterActivity : AppCompatActivity() {
 
             //Request
             val call = getRetrofit().create(APIService::class.java).insertUsuario(
-                Usuario(correo = correo.text.toString(), clave = MD5.encriptar(password1.text.toString()),
-                    nombre = nombre.text.toString(), apellidos = apellidos.text.toString(),
-                    fechaNacimiento = etFechaNacimiento.text.toString(), sexo = sexo
+                Usuario(correo = correo.editText!!.text.toString(), clave = MD5.encriptar(password1.editText!!.text.toString()),
+                    nombre = nombre.editText!!.text.toString(), apellidos = apellidos.editText!!.text.toString(),
+                    fechaNacimiento = etFechaNacimiento.editText!!.text.toString(), sexo = sexo
                 )
             )
 
@@ -103,14 +104,14 @@ class RegisterActivity : AppCompatActivity() {
                     val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
                     val editor = sharedPreferences.edit()
                     editor.apply {
-                        putString("email", correo.text.toString())
-                        putString("pass", MD5.encriptar(password1.text.toString()))
+                        putString("email", correo.editText!!.text.toString())
+                        putString("pass", MD5.encriptar(password1.editText!!.text.toString()))
                     }.apply()
 
                     //QUITAR
                     Toast.makeText(
                         applicationContext,
-                        MD5.encriptar(password1.text.toString()) + "",
+                        MD5.encriptar(password1.editText!!.text.toString()) + "",
                         Toast.LENGTH_LONG
                     ).show()
 
@@ -140,8 +141,8 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun limpiarClaves() {
-        password2.text.clear()
-        password1.text.clear()
+        password2.editText!!.text.clear()
+        password1.editText!!.text.clear()
     }
 
     private fun getRetrofit(): Retrofit {
@@ -164,7 +165,7 @@ class RegisterActivity : AppCompatActivity() {
     private fun onDateSelected(day: Int, month: Int, year: Int) {
 
         fechaSeleccionada = LocalDate.of(year, (month + 1), day)
-        etFechaNacimiento.setText(fechaSeleccionada.format(FORMATO_FECHA).toString())
+        etFechaNacimiento.editText!!.setText(fechaSeleccionada.format(FORMATO_FECHA).toString())
 
         Toast.makeText(this, "Fecha: ${fechaSeleccionada.format(FORMATO_FECHA).toString()}", Toast.LENGTH_LONG).show()
     }
