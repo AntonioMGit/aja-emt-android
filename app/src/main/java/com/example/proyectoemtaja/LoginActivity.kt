@@ -12,6 +12,7 @@ import com.example.proyectoemtaja.config.MD5
 import com.example.proyectoemtaja.databinding.ActivityLoginBinding
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Variables
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,8 +26,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
 
 
-    private lateinit var etEmail: EditText
-    private lateinit var etContrasenia: EditText
+    private lateinit var etEmail: TextInputLayout
+    private lateinit var etContrasenia: TextInputLayout
     private lateinit var textview: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +39,6 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         etContrasenia = binding.etContrasenia
         etEmail = binding.etEmail
-        textview = binding.textView
 
         //funcion que busca si hay datos del usuario guardados para saltarse el login
         //si no hay datos no hace nada
@@ -77,8 +77,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun accionBotonLogin() {
-        if (etContrasenia.text.isNotBlank() && etEmail.text.isNotBlank()) {
-            loguear(etEmail.text.toString(), MD5.encriptar(etContrasenia.text.toString()))
+        if (etContrasenia.editText!!.text.isNotBlank() && etEmail.editText!!.text.isNotBlank()) {
+            loguear(etEmail.editText!!.text.toString(), MD5.encriptar(etContrasenia.editText!!.text.toString()))
         } else {
             Toast.makeText(this, "Faltan campos por rellenar.", Toast.LENGTH_LONG).show()
         }
@@ -118,7 +118,7 @@ class LoginActivity : AppCompatActivity() {
 
                 } else if (call.code() == 401){
                     msg = "Usuario o contraseña incorrectos."
-                    etContrasenia.text.clear()
+                    etContrasenia.editText!!.text.clear()
                 }
             }
             catch (e: Exception) {
