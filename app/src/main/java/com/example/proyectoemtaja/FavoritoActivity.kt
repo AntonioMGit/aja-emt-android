@@ -28,10 +28,12 @@ class FavoritoActivity : AppCompatActivity() {
         btnBuscarParadaFav.setOnClickListener {
 
             val intent = Intent(this, MainActivity::class.java);
-            var nParada = etNumParadaFav.text.toString()
+            val nParada = etNumParadaFav.text.toString()
             intent.putExtra("nParada", nParada)
 
             startActivity(intent);
         }
     }
+
+
 }

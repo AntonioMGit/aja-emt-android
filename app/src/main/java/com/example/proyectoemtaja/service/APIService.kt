@@ -12,7 +12,8 @@ interface APIService {
     @GET
     suspend fun getTimeArrivalBus(
         @Url url: String,
-        @Header("Authorization") token: String
+        @Header("Authorization") token: String,
+        @Header("idUsuario") usuario: String
     ): Response<TimeArrivalBus>
 
     @GET
@@ -22,17 +23,19 @@ interface APIService {
     ): Response<ListaParadas>
     // @POST("/login")
 
-    @POST("usuario/insertar/")
+    @POST("usuario/insertar")
     suspend fun insertUsuario(@Body usuario: Usuario): Response<Usuario>
 
     @POST("usuario/login")
     @FormUrlEncoded
-
     suspend fun login(
         @Field("correo") user: String,
         @Field("password") password: String/*@Body request:LoginRequest*/
     ): Response<LoginResponse>
-    //@Body login:LoginRequest
-    // @FieldMap params:Map<String,String>
-    //@Field("user") user:String,@Field("password") password:String
+
+    @GET("usuario/probar-token")
+    suspend fun probarToken(
+        @Header("Authorization") token: String?
+    ): Response<Void>
+
 }

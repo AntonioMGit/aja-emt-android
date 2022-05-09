@@ -30,6 +30,9 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var textview: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        probarToken()
+
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -47,12 +50,37 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.btnLogin.setOnClickListener {
-            if (etContrasenia.text.isNotBlank() && etEmail.text.isNotBlank()) {
-                loguear(etEmail.text.toString(), MD5.encriptar(etContrasenia.text.toString()))
+            accionBotonLogin()
+        }
+    }
 
-            } else {
-                Toast.makeText(this, "Faltan campos por rellenar.", Toast.LENGTH_LONG).show()
+    private fun probarToken() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val sharedPreferences = getSharedPreferences(Variables.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                val token = sharedPreferences.getString(Variables.ACCESS_TOKEN_SHARED_PREFERENCES, "")
+
+                val call = getRetrofit().create(APIService::class.java).probarToken(token = token)
+
+                if (call.isSuccessful) {
+                    actividadFavorito()
+                } else {
+                    Log.i("Error", "Token no valido")
+                }
             }
+            catch (e: Exception) {
+                e.message?.let { Log.e("Error", it) }
+                e.printStackTrace()
+            }
+        }
+
+    }
+
+    private fun accionBotonLogin() {
+        if (etContrasenia.text.isNotBlank() && etEmail.text.isNotBlank()) {
+            loguear(etEmail.text.toString(), MD5.encriptar(etContrasenia.text.toString()))
+        } else {
+            Toast.makeText(this, "Faltan campos por rellenar.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -69,15 +97,11 @@ class LoginActivity : AppCompatActivity() {
     */
     private fun loguear(email: String, pass: String) {
         CoroutineScope(Dispatchers.IO).launch {
-
             var msg: String  = ""
-
             try {
                 val call = getRetrofit().create(APIService::class.java).login(email, pass)
 
                 if (call.isSuccessful) {
-                    //textview.text = call.body().toString()
-
                     //Guardar las cosas en shared preferences
                     val sharedPreferences = getSharedPreferences(Variables.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
                     val editor = sharedPreferences.edit()
@@ -90,7 +114,7 @@ class LoginActivity : AppCompatActivity() {
 
                     msg = "Bienvenido $email"
 
-                    startActivity(Intent(applicationContext, FavoritoActivity::class.java))
+                    actividadFavorito()
 
                 } else if (call.code() == 401){
                     msg = "Usuario o contraseña incorrectos."
@@ -102,23 +126,18 @@ class LoginActivity : AppCompatActivity() {
                 Log.e("Error", "${e.message}")
                 e.printStackTrace()
             }
-
             runOnUiThread {
                 Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
             }
-
         }
     }
 
-    private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl(Variables.URL_BASE)
-        /*.addConverterFactory(
-            NullOnEmptyConverterFactory()
-        )
-        */
-        .addConverterFactory(
-            GsonConverterFactory.create()
-        ).build()
+    private fun actividadFavorito() {
+        startActivity(Intent(applicationContext, FavoritoActivity::class.java))
+    }
 
+    private fun getRetrofit(): Retrofit {
+        return Retrofit.Builder().baseUrl(Variables.URL_BASE)/*.addConverterFactory(NullOnEmptyConverterFactory()) */
+            .addConverterFactory(GsonConverterFactory.create()).build()
     }
 }

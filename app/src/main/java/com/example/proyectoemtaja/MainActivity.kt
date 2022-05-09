@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl(Variables.URL_BASE + "/controladores-emt/")
+        return Retrofit.Builder().baseUrl(Variables.URL_BASE)
             .addConverterFactory(
                 GsonConverterFactory.create()
             ).build()
@@ -86,40 +86,32 @@ class MainActivity : AppCompatActivity() {
     private fun searchParada(parada: String) {
 
         CoroutineScope(Dispatchers.IO).launch {
-            val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
-            val call =
-                getRetrofit().create(APIService::class.java).getTimeArrivalBus(
-                    "consultar-parada/$parada/",
-                    "Bearer " + sharedPreferences.getString("accessToken", "").toString()
-                )
+            val sharedPreferences = getSharedPreferences(Variables.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+
+            val call = getRetrofit().create(APIService::class.java).getTimeArrivalBus(
+                    "/controladores-emt/consultar-parada/$parada",
+                    "Bearer " + sharedPreferences.getString(Variables.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString(),
+                    sharedPreferences.getString(Variables.EMAIL_SHARED_PREFERENCES, "").toString()
+            )
 
             if (call.isSuccessful) {
-
                 Log.d("Debug", "Entramos a actualizar datos")
-
                 try {
                     val timeArrivalBus = call.body() //exceptioon
-                    var mapa = timeArrivalBus?.data?.get(0)?.arrive?.stream()
-                        ?.collect(Collectors.groupingBy { it.line })
-
+                    var mapa = timeArrivalBus?.data?.get(0)?.arrive?.stream()?.collect(Collectors.groupingBy { it.line })
                     lista.clear()
-
                     mapa?.forEach {
                         if (it.value.size > 0) {
                             lista.add(it)
                         }
                     }
-
                     lista.sortWith(Comparator { entry, entry2 ->
                         entry.value.get(0).estimateArrive - (entry2.value.get(0).estimateArrive)
                     })
-
                     Log.d("Debug", "Datos actualizados")
-
                 } catch (e: Exception) {
                     Log.e("Error", "Error al actializar datos")
                 }
-
                 Log.d("Debug", "RV actualizados")
             } else {
                 Log.e("Debug", "Error al buscar")
