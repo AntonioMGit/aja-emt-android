@@ -52,7 +52,7 @@
             android:layout_margin="20dp">
 
             <ImageView
-                android:layout_width="304dp"
+                android:layout_width="match_parent"
                 android:layout_height="158dp"
                 android:src="@mipmap/logo_emt"
                 app:layout_constraintBottom_toBottomOf="parent"

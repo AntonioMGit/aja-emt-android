@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.proyectoemtaja.config.MD5
 import com.example.proyectoemtaja.databinding.ActivityRegisterBinding
 import com.example.proyectoemtaja.models.usuario.Sexo
@@ -25,7 +26,8 @@ class RegisterActivity : AppCompatActivity() {
 
     val FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-    private lateinit var spSexo: Spinner
+    //private lateinit var spSexo: Spinner
+    private lateinit var spSexo: TextInputLayout
 
     private lateinit var etFechaNacimiento: TextInputLayout
     private lateinit var sexo: Sexo
@@ -36,6 +38,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var password2: TextInputLayout
     private lateinit var nombre: TextInputLayout
     private lateinit var apellidos: TextInputLayout
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -59,11 +62,11 @@ class RegisterActivity : AppCompatActivity() {
 
         //lo pongo para probar que lo demas funciona
         //habria que quitarlo
-
+/*
         binding.button.setOnClickListener {
             startActivity(Intent(this, FavoritoActivity::class.java))
         }
-
+*/
         binding.btnVolverLogin.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
         }
@@ -89,9 +92,13 @@ class RegisterActivity : AppCompatActivity() {
 
             //Request
             val call = getRetrofit().create(APIService::class.java).insertUsuario(
-                Usuario(correo = correo.editText!!.text.toString(), clave = MD5.encriptar(password1.editText!!.text.toString()),
-                    nombre = nombre.editText!!.text.toString(), apellidos = apellidos.editText!!.text.toString(),
-                    fechaNacimiento = etFechaNacimiento.editText!!.text.toString(), sexo = sexo
+                Usuario(
+                    correo = correo.editText!!.text.toString(),
+                    clave = MD5.encriptar(password1.editText!!.text.toString()),
+                    nombre = nombre.editText!!.text.toString(),
+                    apellidos = apellidos.editText!!.text.toString(),
+                    fechaNacimiento = etFechaNacimiento.editText!!.text.toString(),
+                    sexo = Sexo.sacarSexo(spSexo.editText!!.text.toString())
                 )
             )
 
@@ -171,7 +178,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun initSpinner() {
-        spSexo = binding.spSexo//findViewById(R.id.spSexo)
+        /*spSexo = binding.spSexo//findViewById(R.id.spSexo)
         val list = Sexo.values()
         val adaptador = ArrayAdapter(this, android.R.layout.simple_spinner_item, list)
         spSexo.adapter = adaptador
@@ -190,7 +197,12 @@ class RegisterActivity : AppCompatActivity() {
                 sexo = Sexo.MUJER
             }
 
-        }
+        }*/
+        spSexo = binding.spSexo
+
+        val items = listOf(Sexo.STRING_HOMRBE, Sexo.STRING_MUJER, Sexo.STRING_NO_ESPECIFICADO)
+        val adapter = ArrayAdapter(this, R.layout.list_item, items)
+        (spSexo.editText as? AutoCompleteTextView)?.setAdapter(adapter)
     }
 
 
