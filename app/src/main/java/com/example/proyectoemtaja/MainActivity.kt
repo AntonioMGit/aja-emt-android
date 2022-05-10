@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.service.APIService
@@ -22,6 +23,7 @@ import java.lang.Exception
 import java.util.*
 import java.util.stream.Collectors
 import kotlin.Comparator
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
