@@ -95,7 +95,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl("${Variables.URL_BASE}/controladores-emt/")
+        return Retrofit.Builder().baseUrl("${Variables.URL_BASE}controladores-emt/")
             .addConverterFactory(
                 GsonConverterFactory.create()
             ).build()
