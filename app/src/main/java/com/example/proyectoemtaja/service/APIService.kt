@@ -25,6 +25,10 @@ interface APIService {
         @Header(Cabeceras.HEADER_TOKEN) token: String
     ): Response<ListaParadas>
 
+
+    @PUT(UrlServidor.URL_ACTUALIZAR_USUARIO)
+    suspend fun actualizarUsuario(@Header(Cabeceras.HEADER_TOKEN) token: String,@Body usuario:Usuario): Response<Usuario>
+
     @POST(UrlServidor.URL_INSERTAR_USUARIO)
     suspend fun insertUsuario(
         @Body usuario: Usuario

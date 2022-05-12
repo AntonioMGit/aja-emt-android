@@ -27,7 +27,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var etEmail: TextInputLayout
     private lateinit var etContrasenia: TextInputLayout
-    private lateinit var textview: TextView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 

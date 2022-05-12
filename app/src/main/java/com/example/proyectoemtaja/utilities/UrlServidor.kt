@@ -18,5 +18,7 @@ class UrlServidor {
         const val URL_PROBAR_TOKEN = "/usuario/probar-token"
 
         const val URL_LISTAR_FAVORITOS = "/favorito/obtener-favoritos"
+
+        const val URL_ACTUALIZAR_USUARIO = "/usuario/actualizar"
     }
 }

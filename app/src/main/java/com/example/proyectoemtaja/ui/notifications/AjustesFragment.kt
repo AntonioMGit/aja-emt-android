@@ -1,5 +1,7 @@
 package com.example.proyectoemtaja.ui.notifications
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +9,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.proyectoemtaja.ActualizarActivity
+import com.example.proyectoemtaja.LoginActivity
 import com.example.proyectoemtaja.databinding.FragmentAjustesBinding
+import com.example.proyectoemtaja.utilities.Constantes
 
 class AjustesFragment : Fragment() {
 
@@ -27,7 +32,24 @@ class AjustesFragment : Fragment() {
         val root: View = binding.root
 
 
+        _binding!!.btnCerrarSesion.setOnClickListener {
+            irLogin()
+        }
+        _binding!!.btnIrActualizar.setOnClickListener {
+            irActualizar()
+        }
         return root
+    }
+
+    private fun irActualizar() {
+        startActivity(Intent(context,ActualizarActivity::class.java))
+    }
+
+    private fun irLogin() {
+        startActivity(Intent(context,LoginActivity::class.java))
+        val sharedPreferences = requireActivity().getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        //FIXME:No se si funciona
+        sharedPreferences.edit().clear()
     }
 
     override fun onDestroyView() {

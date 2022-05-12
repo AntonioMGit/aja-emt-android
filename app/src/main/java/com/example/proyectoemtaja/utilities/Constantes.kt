@@ -1,5 +1,7 @@
 package com.example.proyectoemtaja.utilities
 
+import java.time.format.DateTimeFormatter
+
 class Constantes {
     companion object {
 
@@ -10,6 +12,8 @@ class Constantes {
         const val PASSWORD_SHARED_PREFERENCES: String = "pass"
 
         const val ACCESS_TOKEN_SHARED_PREFERENCES: String = "accessToken"
+
+        val FORMATO_FECHA:DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
 
     }

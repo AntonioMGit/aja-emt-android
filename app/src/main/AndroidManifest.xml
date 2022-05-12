@@ -15,6 +15,9 @@
         android:theme="@style/Theme.ProyectoEmtAja"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ActualizarActivity"
+            android:exported="false" />
+        <activity
             android:name=".MenuPrincipalActivity"
             android:exported="false"
             android:label="@string/title_activity_menu_principal" />

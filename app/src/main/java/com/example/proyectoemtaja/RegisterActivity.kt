@@ -23,13 +23,12 @@ import java.time.format.DateTimeFormatter
 
 class RegisterActivity : AppCompatActivity() {
 
-    val FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     //private lateinit var spSexo: Spinner
     private lateinit var spSexo: TextInputLayout
 
     private lateinit var etFechaNacimiento: TextInputLayout
-    private lateinit var sexo: Sexo
+
     private lateinit var fechaSeleccionada: LocalDate
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var correo: TextInputLayout
@@ -169,9 +168,9 @@ class RegisterActivity : AppCompatActivity() {
     private fun onDateSelected(day: Int, month: Int, year: Int) {
 
         fechaSeleccionada = LocalDate.of(year, (month + 1), day)
-        etFechaNacimiento.editText!!.setText(fechaSeleccionada.format(FORMATO_FECHA).toString())
+        etFechaNacimiento.editText!!.setText(fechaSeleccionada.format(Constantes.FORMATO_FECHA).toString())
 
-        Toast.makeText(this, "Fecha: ${fechaSeleccionada.format(FORMATO_FECHA).toString()}", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Fecha: ${fechaSeleccionada.format(Constantes.FORMATO_FECHA).toString()}", Toast.LENGTH_LONG).show()
     }
 
     private fun initSpinner() {
