@@ -50,7 +50,17 @@ class FavoritoFragment : Fragment() {
 
         rvFavoritos = binding.rvFavoritos
         rvFavoritos.layoutManager = LinearLayoutManager(requireContext())
-        rvFavoritos.adapter = FavoritoAdapter(favoritos)
+
+        var adapter = FavoritoAdapter(favoritos)
+
+        adapter.setOnItemClickListener(object : FavoritoAdapter.OnItemClickListener{
+            override fun onItemClick(position: Int) {
+                accionRV(position)
+            }
+        })
+
+        rvFavoritos.adapter = adapter
+
 
         buscarFavoritos()
 
@@ -60,6 +70,19 @@ class FavoritoFragment : Fragment() {
         }
 
         return root
+    }
+
+    fun accionRV(pos: Int) {
+        var fav = favoritos[pos]
+
+        val sharedPreferences = requireActivity().getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+
+        var intent = Intent(requireContext(), MainActivity::class.java)
+
+        intent.putExtra("nParada", fav.idParada)
+
+        startActivity(intent)
+
     }
 
     fun mostrarFragmentBuscar () {
