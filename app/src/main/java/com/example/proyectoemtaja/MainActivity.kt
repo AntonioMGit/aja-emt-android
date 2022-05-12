@@ -2,11 +2,11 @@ package com.example.proyectoemtaja
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
+import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.service.APIService
@@ -27,11 +27,10 @@ import kotlin.collections.ArrayList
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var btnBuscar: Button
-    private lateinit var btnMaps: Button
-    private lateinit var etParada: EditText
     private lateinit var rvBuses: RecyclerView
-    private lateinit var btnAFav: Button
+    private lateinit var tvNombre: TextView
+    private lateinit var tvIdParada: TextView
+    private lateinit var imgBus: ImageView
 
     val lista = ArrayList<Map.Entry<String, List<Arrive>>>()
 
@@ -40,40 +39,20 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // binding.btnBuscarParada=findViewById(R.id.btnBuscarParada)
-        btnBuscar = binding.btnBuscarParada
-        etParada = binding.etParada//findViewById(R.id.etParada)
-        rvBuses = binding.rvBusesParada//findViewById(R.id.rvBusesParada)
+        rvBuses = binding.rvBusesParada
         rvBuses.layoutManager = LinearLayoutManager(this)
         rvBuses.adapter = BusParadaAdapter(lista)
 
-        btnMaps = binding.btnMaps
-        btnAFav = binding.btnAFav
+        tvIdParada = binding.tvBuscarParadaId
+        tvNombre = binding.tvBuscarParadaNombre
+        imgBus = binding.imgFotoBus
 
-        var nParada: String? = intent.getStringExtra("nParada")
 
-        if (!nParada.isNullOrEmpty())
-            searchParada(nParada.toString())
 
-        btnBuscar.setOnClickListener {
-            accionBoton()
-        }
+        var nParada: String = intent.getStringExtra("nParada")!!
 
-        btnMaps.setOnClickListener {
-            startActivity(Intent(this, MapsActivity::class.java))
-        }
+        searchParada(nParada.toString())
 
-        btnAFav.setOnClickListener {
-            startActivity(Intent(this, FavoritoActivity::class.java))
-        }
-
-    }
-
-    private fun accionBoton() {
-        val parada = etParada.text.toString().trim()
-        //rvBuses.adapter = null
-        searchParada(parada = parada)
-        etParada.text.clear()
     }
 
     private fun getRetrofit(): Retrofit {
@@ -109,6 +88,17 @@ class MainActivity : AppCompatActivity() {
                     lista.sortWith(Comparator { entry, entry2 ->
                         entry.value.get(0).estimateArrive - (entry2.value.get(0).estimateArrive)
                     })
+
+                    //Se tiene que cambiar
+                    runOnUiThread {
+                        tvIdParada.text = "Parada de buses EMT ${timeArrivalBus!!.data[0].stopInfo[0].label}"
+                        tvNombre.text = timeArrivalBus.data[0].stopInfo[0].description
+
+                        if (timeArrivalBus.data[0].incident.listaIncident.data.size > 0) {
+                            imgBus.setImageResource(R.drawable.ic_baseline_bus_alert_24)
+                        }
+                    }
+
                     Log.d("Debug", "Datos actualizados")
                 } catch (e: Exception) {
                     Log.e("Error", "Error al actializar datos")

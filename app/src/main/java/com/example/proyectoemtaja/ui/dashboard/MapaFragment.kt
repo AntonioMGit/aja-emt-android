@@ -11,6 +11,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import com.example.proyectoemtaja.MainActivity
 import com.example.proyectoemtaja.models.listaParadas.ListaParadas
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Constantes
@@ -140,7 +141,6 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
                                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.mini_pin_bus_azul_claro))
                         )
 
-
                         //Log.d("Debug", "snippet:" + nParada.toString())
                         //mMap.addMarker(MarkerOptions().snippet(nParada.toString()))
                     }
@@ -158,7 +158,7 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun buscarParada(nParada: String?) {
-        val intent = Intent();
+        val intent = Intent(requireContext(), MainActivity::class.java);
         intent.putExtra("nParada", nParada)
 
         startActivity(intent);

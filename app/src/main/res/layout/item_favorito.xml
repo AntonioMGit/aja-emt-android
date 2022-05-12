@@ -88,7 +88,7 @@
             app:cardCornerRadius="10dp"
             android:layout_gravity="center"
             android:layout_margin="8dp"
-            android:gravity="center"
+            android:gravity="left|center"
             android:textColor="@color/black"
             android:textSize="21sp"
             android:textStyle="bold"
