@@ -8,8 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.models.timeArrival.Arrive
 import java.util.stream.IntStream
 
-class BusParadaAdapter(private val datos: ArrayList<Map.Entry<String, List<Arrive>>>) :
-    RecyclerView.Adapter<BusParadaAdapter.ViewHolderDatos>() {
+class BusParadaAdapter(private val datos: ArrayList<Map.Entry<String, List<Arrive>>>) : RecyclerView.Adapter<BusParadaAdapter.ViewHolderDatos>() {
 
     private var listDatos = datos
 

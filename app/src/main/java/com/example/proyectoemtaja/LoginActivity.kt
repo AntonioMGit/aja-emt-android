@@ -4,21 +4,20 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.proyectoemtaja.config.MD5
 import com.example.proyectoemtaja.databinding.ActivityLoginBinding
 import com.example.proyectoemtaja.service.APIService
-import com.example.proyectoemtaja.utilities.Variables
+import com.example.proyectoemtaja.utilities.Constantes
+import com.example.proyectoemtaja.utilities.UrlServidor
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.math.log
 
 
 class LoginActivity : AppCompatActivity() {
@@ -57,13 +56,13 @@ class LoginActivity : AppCompatActivity() {
     private fun probarToken() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val sharedPreferences = getSharedPreferences(Variables.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                val token = sharedPreferences.getString(Variables.ACCESS_TOKEN_SHARED_PREFERENCES, "")
+                val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                val token = sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "")!!
 
                 val call = getRetrofit().create(APIService::class.java).probarToken(token = token)
 
                 if (call.isSuccessful) {
-                    actividadFavorito()
+                    irMenuPrincipal()
                 } else {
                     Log.i("Error", "Token no valido")
                 }
@@ -103,18 +102,18 @@ class LoginActivity : AppCompatActivity() {
 
                 if (call.isSuccessful) {
                     //Guardar las cosas en shared preferences
-                    val sharedPreferences = getSharedPreferences(Variables.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                    val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
                     val editor = sharedPreferences.edit()
                     editor.apply {
-                        putString(Variables.EMAIL_SHARED_PREFERENCES, email)
-                        putString(Variables.PASSWORD_SHARED_PREFERENCES, MD5.encriptar(pass))
-                        putString(Variables.ACCESS_TOKEN_SHARED_PREFERENCES, call.body()?.token.toString())
+                        putString(Constantes.EMAIL_SHARED_PREFERENCES, email)
+                        putString(Constantes.PASSWORD_SHARED_PREFERENCES, MD5.encriptar(pass))
+                        putString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, call.body()?.token.toString())
                         //putString("refreshToken", call.body()?.token.toString())
                     }.apply()
 
                     msg = "Bienvenido $email"
 
-                    actividadFavorito()
+                    irMenuPrincipal()
 
                 } else if (call.code() == 401){
                     msg = "Usuario o contraseña incorrectos."
@@ -132,12 +131,12 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun actividadFavorito() {
-        startActivity(Intent(applicationContext, FavoritoActivity::class.java))
+    private fun irMenuPrincipal() {
+        startActivity(Intent(applicationContext, MenuPrincipalActivity::class.java))
     }
 
     private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl(Variables.URL_BASE)/*.addConverterFactory(NullOnEmptyConverterFactory()) */
+        return Retrofit.Builder().baseUrl(UrlServidor.URL_BASE)/*.addConverterFactory(NullOnEmptyConverterFactory()) */
             .addConverterFactory(GsonConverterFactory.create()).build()
     }
 }

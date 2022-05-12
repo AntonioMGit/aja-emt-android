@@ -1,12 +1,16 @@
-package com.example.proyectoemtaja
+package com.example.proyectoemtaja.ui.dashboard
 
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.example.proyectoemtaja.R
+import com.example.proyectoemtaja.databinding.FragmentMapaBinding
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.example.proyectoemtaja.databinding.ActivityMapsBinding
 import com.example.proyectoemtaja.models.listaParadas.ListaParadas
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Constantes
@@ -26,36 +30,40 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+
+class MapaFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
-    private lateinit var binding: ActivityMapsBinding
 
     val lista = ArrayList<Map.Entry<String, List<ListaParadas>>>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private var _binding: FragmentMapaBinding? = null
 
-        binding = ActivityMapsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    private lateinit var appContext: Context
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+
+        _binding = FragmentMapaBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+        appContext = requireContext().applicationContext
+
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        return root
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     override fun onMapReady(googleMap: GoogleMap) {
-        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_json));
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(appContext, R.raw.style_json));
 
         mMap = googleMap
 
@@ -78,7 +86,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
             val cosas: List<String> = titulo.split(" - ")
             Toast.makeText(
-                this@MapsActivity,
+                context,
                 "Número de parada: ${cosas.get(1).toString()}",
                 Toast.LENGTH_SHORT
             )
@@ -106,7 +114,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun listarParadas() {
 
         CoroutineScope(Dispatchers.Main).launch {
-            val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+            val sharedPreferences = requireActivity().getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
             val call = getRetrofit().create(APIService::class.java).getListaParadas(
                 "Bearer " + sharedPreferences.getString("accessToken", "").toString()
             )
@@ -150,9 +158,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun buscarParada(nParada: String?) {
-        val intent = Intent(this, MainActivity::class.java);
+        val intent = Intent();
         intent.putExtra("nParada", nParada)
 
         startActivity(intent);
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

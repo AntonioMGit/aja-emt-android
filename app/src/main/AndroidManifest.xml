@@ -14,7 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProyectoEmtAja"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".MenuPrincipalActivity"
+            android:exported="false"
+            android:label="@string/title_activity_menu_principal" />
         <activity
             android:name=".FavoritoActivity"
             android:exported="false" />
@@ -41,6 +44,5 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyA08gzIQ5sBTdvmtG5JJKrqJWORQUpb1W4" />
     </application>
-
 
 </manifest>

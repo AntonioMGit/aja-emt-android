@@ -7,20 +7,19 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.databinding.ActivityMainBinding
 import com.example.proyectoemtaja.models.timeArrival.Arrive
-import com.example.proyectoemtaja.utilities.Variables
+import com.example.proyectoemtaja.utilities.Constantes
+import com.example.proyectoemtaja.utilities.UrlServidor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
-import java.util.*
 import java.util.stream.Collectors
 import kotlin.Comparator
 import kotlin.collections.ArrayList
@@ -78,7 +77,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl(Variables.URL_BASE)
+        return Retrofit.Builder().baseUrl(UrlServidor.URL_BASE)
             .addConverterFactory(
                 GsonConverterFactory.create()
             ).build()
@@ -88,12 +87,12 @@ class MainActivity : AppCompatActivity() {
     private fun searchParada(parada: String) {
 
         CoroutineScope(Dispatchers.IO).launch {
-            val sharedPreferences = getSharedPreferences(Variables.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+            val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
             val call = getRetrofit().create(APIService::class.java).getTimeArrivalBus(
-                    "/controladores-emt/consultar-parada/$parada",
-                    "Bearer " + sharedPreferences.getString(Variables.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString(),
-                    sharedPreferences.getString(Variables.EMAIL_SHARED_PREFERENCES, "").toString()
+                url = UrlServidor.urlTiempoAutobus(parada),
+                token = "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString(),
+                idUsuario = sharedPreferences.getString(Constantes.EMAIL_SHARED_PREFERENCES, "").toString()
             )
 
             if (call.isSuccessful) {

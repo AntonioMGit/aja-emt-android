@@ -4,15 +4,14 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.*
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.proyectoemtaja.config.MD5
 import com.example.proyectoemtaja.databinding.ActivityRegisterBinding
 import com.example.proyectoemtaja.models.usuario.Sexo
 import com.example.proyectoemtaja.models.usuario.Usuario
 import com.example.proyectoemtaja.service.APIService
-import com.example.proyectoemtaja.utilities.Variables
+import com.example.proyectoemtaja.utilities.Constantes
+import com.example.proyectoemtaja.utilities.UrlServidor
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +55,7 @@ class RegisterActivity : AppCompatActivity() {
         apellidos = binding.etApellidos
 
         //Listener de la fecha
-        etFechaNacimiento.setOnClickListener {
+        etFechaNacimiento.editText!!.setOnClickListener {
             showDatePickerDialog()
         }
 
@@ -67,15 +66,18 @@ class RegisterActivity : AppCompatActivity() {
             startActivity(Intent(this, FavoritoActivity::class.java))
         }
 */
+        //No esta roto, es porque si el token funciona, te mete directamente en la siguiente activity.
         binding.btnVolverLogin.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
-        binding.btnRegistrar.setOnClickListener { registrar ()}
+        binding.btnRegistrar.setOnClickListener {
+            registrar ()
+        }
     }
 
     private fun registrar() {
-        if (correo.editText!!.text.isNotBlank() && password1.editText!!.text.isNotBlank() && password2.editText!!.text.isNotBlank() && nombre.editText!!.text.isNotBlank() && apellidos.editText!!.text.isNotBlank()) {
+        if (todosLlenos()) {
             if (password1.editText!!.text.toString() == password2.editText!!.text.toString()) {
                 sendRequest()
             } else {
@@ -87,8 +89,17 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    private fun todosLlenos(): Boolean {
+        return correo.editText!!.text.isNotBlank() &&
+                password1.editText!!.text.isNotBlank() &&
+                password2.editText!!.text.isNotBlank() &&
+                nombre.editText!!.text.isNotBlank() &&
+                apellidos.editText!!.text.isNotBlank()
+    }
+
     private fun sendRequest() {
         CoroutineScope(Dispatchers.IO).launch {
+            var msg: String = ""
 
             //Request
             val call = getRetrofit().create(APIService::class.java).insertUsuario(
@@ -102,47 +113,33 @@ class RegisterActivity : AppCompatActivity() {
                 )
             )
 
-            runOnUiThread {
-                if (call.isSuccessful) {
-                    Toast.makeText(applicationContext,"Insertado correctamente.", Toast.LENGTH_LONG).show()
+            if (call.isSuccessful) {
+                msg = "Insertado correctamente."
+                //coge el usuario y la contraseña ENCRIPTADA para evitarse tener que meter el usuario y la contraseña all t tiempo
+                //y asi loguear directamente hasta que de al boton de cerrar sesion
+                val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.apply {
+                    putString(Constantes.EMAIL_SHARED_PREFERENCES, correo.editText!!.text.toString())
+                    putString(Constantes.PASSWORD_SHARED_PREFERENCES, MD5.encriptar(password1.editText!!.text.toString()))
+                }.apply()
 
-                    //coge el usuario y la contraseña ENCRIPTADA para evitarse tener que meter el usuario y la contraseña all t tiempo
-                    //y asi loguear directamente hasta que de al boton de cerrar sesion
-                    val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
-                    val editor = sharedPreferences.edit()
-                    editor.apply {
-                        putString("email", correo.editText!!.text.toString())
-                        putString("pass", MD5.encriptar(password1.editText!!.text.toString()))
-                    }.apply()
+                //tras insertar el usuario loguea directamente
+                //DESCOMENTAR LA LINEA DE ABAJO
+                //startActivity(Intent(applicationContext, FavoritoActivity::class.java))
 
-                    //QUITAR
-                    Toast.makeText(
-                        applicationContext,
-                        MD5.encriptar(password1.editText!!.text.toString()) + "",
-                        Toast.LENGTH_LONG
-                    ).show()
+            } else {
+                var codigoError = call.code()
 
-                    //tras insertar el usuario loguea directamente
-                    //DESCOMENTAR LA LINEA DE ABAJO
-                    //startActivity(Intent(applicationContext, FavoritoActivity::class.java))
-
-                } else {
-                    var codigoError = call.code()
-
-                    if (codigoError == 400) { //error 400 lo tira el servidor cuando ya esta insertado ese usuario.
-                        Toast.makeText(
-                            applicationContext,
-                            "El usuario ya exite.",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else { //si tira otro por la razon que sea
-                        Toast.makeText(
-                            applicationContext,
-                            "No se ha podido realizar la inserción",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
+                if (codigoError == 400) { //error 400 lo tira el servidor cuando ya esta insertado ese usuario.
+                    msg = "El usuario ya exite."
+                } else { //si tira otro por la razon que sea
+                    msg = "No se ha podido realizar la inserción"
                 }
+            }
+
+            runOnUiThread {
+                Toast.makeText(this@RegisterActivity, msg, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -155,7 +152,7 @@ class RegisterActivity : AppCompatActivity() {
     private fun getRetrofit(): Retrofit {
 
         // val gson = GsonBuilder().setDateFormat("yyyy-MM-dd").create()
-        return Retrofit.Builder().baseUrl(Variables.URL_BASE).addConverterFactory(
+        return Retrofit.Builder().baseUrl(UrlServidor.URL_BASE).addConverterFactory(
             GsonConverterFactory.create(/*gson*/)
         ).build()
     }
@@ -178,26 +175,6 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun initSpinner() {
-        /*spSexo = binding.spSexo//findViewById(R.id.spSexo)
-        val list = Sexo.values()
-        val adaptador = ArrayAdapter(this, android.R.layout.simple_spinner_item, list)
-        spSexo.adapter = adaptador
-
-        spSexo.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                sexo = list[position]
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                sexo = Sexo.MUJER
-            }
-
-        }*/
         spSexo = binding.spSexo
 
         val items = listOf(Sexo.STRING_HOMRBE, Sexo.STRING_MUJER, Sexo.STRING_NO_ESPECIFICADO)

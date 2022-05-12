@@ -100,7 +100,7 @@
                     android:inputType="textPassword"/>
 
             </com.google.android.material.textfield.TextInputLayout>
-
+<!--
             <Button
                 android:id="@+id/btnOlvidarContrasenia"
                 android:layout_width="match_parent"
@@ -116,7 +116,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.63"
                 style="@style/Widget.MaterialComponents.Button.TextButton"/>
-
+-->
 
             <Button
                 android:id="@+id/btnLogin"
