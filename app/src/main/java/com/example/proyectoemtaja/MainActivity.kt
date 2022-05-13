@@ -96,6 +96,9 @@ class MainActivity : AppCompatActivity() {
 
                         if (timeArrivalBus.data[0].incident.listaIncident.data.size > 0) {
                             imgBus.setImageResource(R.drawable.ic_baseline_bus_alert_24)
+                            imgBus.setOnClickListener{
+                                Toast.makeText(this@MainActivity, "Eu", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
 

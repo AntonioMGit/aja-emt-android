@@ -1,4 +1,4 @@
-package com.example.proyectoemtaja.ui.dashboard
+package com.example.proyectoemtaja.menuPrincipal.mapa
 
 import android.os.Bundle
 import android.view.LayoutInflater

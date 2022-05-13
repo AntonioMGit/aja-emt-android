@@ -34,7 +34,8 @@ class ActualizarActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_actualizar)
+        binding = ActivityActualizarBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         etAcNombre = binding.etAcNombre
         etAcApellidos = binding.etAcApellidos

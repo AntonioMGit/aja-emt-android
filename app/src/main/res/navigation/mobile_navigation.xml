@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.proyectoemtaja.ui.home.FavoritoFragment"
+        android:name="com.example.proyectoemtaja.menuPrincipal.favoritos.FavoritoFragment"
         android:label="Favoritos"
         tools:layout="@layout/fragment_favoritos" >
         <action
@@ -20,7 +20,7 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.proyectoemtaja.ui.dashboard.MapaFragment"
+        android:name="com.example.proyectoemtaja.menuPrincipal.mapa.MapaFragment"
         android:label="Mapa"
         tools:layout="@layout/fragment_mapa" >
         <action
@@ -36,7 +36,7 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.proyectoemtaja.ui.notifications.AjustesFragment"
+        android:name="com.example.proyectoemtaja.menuPrincipal.ajustes.AjustesFragment"
         android:label="Ajustes"
         tools:layout="@layout/fragment_ajustes" >
         <action

@@ -1,6 +1,5 @@
-package com.example.proyectoemtaja.ui.home
+package com.example.proyectoemtaja.menuPrincipal.favoritos
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -11,7 +10,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.proyectoemtaja.BusParadaAdapter
 import com.example.proyectoemtaja.FavoritoAdapter
 import com.example.proyectoemtaja.MainActivity
 import com.example.proyectoemtaja.databinding.FragmentFavoritosBinding
