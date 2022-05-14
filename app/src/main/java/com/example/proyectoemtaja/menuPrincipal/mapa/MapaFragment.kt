@@ -12,6 +12,7 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import com.example.proyectoemtaja.MainActivity
+import com.example.proyectoemtaja.Paradas
 import com.example.proyectoemtaja.models.listaParadas.ListaParadas
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Constantes
@@ -95,7 +96,6 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
             var p = cosas.get(1).toString().trim()
             buscarParada(p)
 
-            true //?¿?
         }
 
         //mMap.setOnCameraMoveListener { marker ->
@@ -103,7 +103,36 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
         //}
     }
 
+    private fun listarParadas() {
+        try {
+            if (Paradas.listaParadas != null) {
+                var paradas: ListaParadas = ListaParadas(Paradas.listaParadas!!)
 
+                for (i in 0..9) { //prueba con los 9 primeros
+                    var cosa = paradas.data.get(i)
+
+                    Log.d("Debug", i.toString() + ": " + cosa.toString())
+
+                    var latitud = cosa.geometry.coordinates.get(1)
+                    var longitud = cosa.geometry.coordinates.get(0)
+
+                    val parada = LatLng(latitud, longitud)
+                    var nParada = cosa.node.toString()
+                    mMap.addMarker(
+                        MarkerOptions().position(parada).title(cosa.name + " - " + nParada)
+                            .snippet("Pulsa para ver información.")
+                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.mini_pin_bus_azul_claro))
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("Error", "Error cargar datos en el mapa")
+            Log.e("Error", e.stackTraceToString())
+        }
+        Log.d("Debug", "RV actualizados")
+    }
+
+    /*
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder().baseUrl(UrlServidor.URL_BASE)
             .addConverterFactory(
@@ -111,6 +140,7 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
             ).build()
 
     }
+
 
     private fun listarParadas() {
 
@@ -155,7 +185,7 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
                 Log.e("Debug", "Error al buscar")
             }
         }
-    }
+    }*/
 
     private fun buscarParada(nParada: String?) {
         val intent = Intent(requireContext(), MainActivity::class.java);

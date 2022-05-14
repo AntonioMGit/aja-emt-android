@@ -132,11 +132,34 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun irMenuPrincipal() {
+        cargarParadas()
         startActivity(Intent(applicationContext, MenuPrincipalActivity::class.java))
     }
 
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder().baseUrl(UrlServidor.URL_BASE)/*.addConverterFactory(NullOnEmptyConverterFactory()) */
             .addConverterFactory(GsonConverterFactory.create()).build()
+    }
+
+    private fun cargarParadas() {
+
+        CoroutineScope(Dispatchers.Main).launch {
+            val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+            val call = getRetrofit().create(APIService::class.java).getListaParadas(
+                "Bearer " + sharedPreferences.getString("accessToken", "").toString()
+            )
+
+            if (call.isSuccessful) {
+                try {
+                    Paradas.listaParadas = call.body()
+                    Log.d("Debug", "Paradas cargadas")
+                } catch (e: Exception) {
+                    Log.e("Error", "No se han podido cargar las paradas")
+                }
+                Log.d("Debug", "RV actualizados")
+            } else {
+                Log.e("Debug", "Error al buscar")
+            }
+        }
     }
 }

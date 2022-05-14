@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import java.util.ArrayList
 
 data class ListaParadas (
-    var code:String,
+    var code: String,
 
     var description:String,
 
@@ -12,5 +12,6 @@ data class ListaParadas (
 
     @SerializedName("data")
     var data : ArrayList<DataListaParadas>
-    ) {
+) {
+    constructor(l: ListaParadas) : this(l.code, l.description, l.datetime, l.data)
 }
