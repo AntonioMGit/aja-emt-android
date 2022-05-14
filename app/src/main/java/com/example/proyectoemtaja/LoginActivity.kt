@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +29,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var etEmail: TextInputLayout
     private lateinit var etContrasenia: TextInputLayout
 
+    private lateinit var ckbxGuardarCredenciales: CheckBox
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -38,6 +41,8 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         etContrasenia = binding.etContrasenia
         etEmail = binding.etEmail
+
+        ckbxGuardarCredenciales = binding.ckbxGuardarCredenciales
 
         //funcion que busca si hay datos del usuario guardados para saltarse el login
         //si no hay datos no hace nada
@@ -59,12 +64,16 @@ class LoginActivity : AppCompatActivity() {
                 val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
                 val token = sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "")!!
 
-                val call = getRetrofit().create(APIService::class.java).probarToken(token = token)
+                val call = getRetrofit().create(APIService::class.java).probarToken(token = "Bearer " + token)
 
                 if (call.isSuccessful) {
+                    Log.e("as", "token bien  --------> " + token.toString() + "")
+
+                    Log.e("as", "codigo --------> " + call.code().toString() + "")
                     irMenuPrincipal()
                 } else {
-                    Log.i("Error", "Token no valido")
+                    Log.e("as", "token mal  --------> " + token.toString() + "")
+                    Log.e("Error", "Token no valido")
                 }
             }
             catch (e: Exception) {
@@ -101,15 +110,30 @@ class LoginActivity : AppCompatActivity() {
                 val call = getRetrofit().create(APIService::class.java).login(email, pass)
 
                 if (call.isSuccessful) {
-                    //Guardar las cosas en shared preferences
-                    val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+
+                    val sharedPreferences =
+                        getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES,
+                            Context.MODE_PRIVATE)
                     val editor = sharedPreferences.edit()
-                    editor.apply {
-                        putString(Constantes.EMAIL_SHARED_PREFERENCES, email)
-                        putString(Constantes.PASSWORD_SHARED_PREFERENCES, MD5.encriptar(pass))
-                        putString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, call.body()?.token.toString())
-                        //putString("refreshToken", call.body()?.token.toString())
-                    }.apply()
+                    //Si se ha pulsado el check de guardar credenciales se guardan
+                    if(ckbxGuardarCredenciales.isChecked) {
+                        editor.apply {
+                            putString(Constantes.EMAIL_SHARED_PREFERENCES, email)
+                            putString(Constantes.PASSWORD_SHARED_PREFERENCES, MD5.encriptar(pass))
+                            putString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES,
+                                call.body()?.token.toString())
+                            //putString("refreshToken", call.body()?.token.toString())
+                        }.apply()
+                    }else{
+                        //por si acaso se ponen en blanco si no se pulsa, el token se tiene que guardar si o si al loguear
+                        editor.apply {
+                            putString(Constantes.EMAIL_SHARED_PREFERENCES, "")
+                            putString(Constantes.PASSWORD_SHARED_PREFERENCES, "")
+                            putString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES,
+                                call.body()?.token.toString())
+                            //putString("refreshToken", call.body()?.token.toString())
+                        }.apply()
+                    }
 
                     msg = "Bienvenido $email"
 
