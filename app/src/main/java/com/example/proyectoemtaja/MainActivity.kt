@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                         entry.value.get(0).estimateArrive - (entry2.value.get(0).estimateArrive)
                     })
 
-                    //Se tiene que cambiar
+                    //FIXME: Se tiene que cambiar
                     runOnUiThread {
                         tvIdParada.text = "Parada de buses EMT ${timeArrivalBus!!.data[0].stopInfo[0].label}"
                         tvNombre.text = timeArrivalBus.data[0].stopInfo[0].description

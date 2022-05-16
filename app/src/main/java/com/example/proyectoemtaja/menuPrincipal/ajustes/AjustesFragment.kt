@@ -45,15 +45,12 @@ class AjustesFragment : Fragment() {
     }
 
     private fun irLogin() {
-        startActivity(Intent(context,LoginActivity::class.java))
+
         val sharedPreferences = requireActivity().getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.apply {
-            putString(Constantes.EMAIL_SHARED_PREFERENCES, "")
-            putString(Constantes.PASSWORD_SHARED_PREFERENCES, "")
-            putString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "")
-            //putString("refreshToken", call.body()?.token.toString())
-        }.apply()
+
+        sharedPreferences.edit().clear().commit()
+
+        startActivity(Intent(context,LoginActivity::class.java))
     }
 
     override fun onDestroyView() {

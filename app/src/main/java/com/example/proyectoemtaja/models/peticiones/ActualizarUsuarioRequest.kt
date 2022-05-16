@@ -1,14 +1,15 @@
-package com.example.proyectoemtaja.models.usuario
+package com.example.proyectoemtaja.models.peticiones
 
+import com.example.proyectoemtaja.models.usuario.Sexo
 import com.google.gson.annotations.SerializedName
-import java.time.LocalDate
 
-class Usuario(
-    @SerializedName("correo")
-    var correo:String,
+data class ActualizarUsuarioRequest(
 
     @SerializedName("clave")
     var clave:String,
+
+    @SerializedName("nuevaClave")
+    var nuevaClave: String,
 
     @SerializedName("nombre")
     var nombre:String,
@@ -20,6 +21,6 @@ class Usuario(
     var fechaNacimiento:String,
 
     @SerializedName("sexo")
-    var sexo:Sexo
-) {
-}
+    var sexo: Sexo
+
+)

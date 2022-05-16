@@ -73,7 +73,7 @@ class FavoritoFragment : Fragment() {
     fun accionRV(pos: Int) {
         var fav = favoritos[pos]
 
-        val sharedPreferences = requireActivity().getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        //val sharedPreferences = requireActivity().getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
         var intent = Intent(requireContext(), MainActivity::class.java)
 

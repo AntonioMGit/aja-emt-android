@@ -6,19 +6,47 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 tools:context=".menuPrincipal.favoritos.FavoritoFragment">
 
-    <TextView
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="start"
-        android:text="Favoritos"
-        android:textColor="@color/black"
-        android:textSize="@android:dimen/app_icon_size"
-        app:layout_constraintBottom_toTopOf="@+id/gh1"
+        android:layout_height="0dp"
+        android:layout_margin="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/rvFavoritos"
         app:layout_constraintEnd_toEndOf="@id/gv2"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@id/gv1"
+        app:layout_constraintStart_toStartOf="@+id/gv1"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.484" />
+        app:layout_constraintVertical_bias="1.0">
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="2dp"
+            android:src="@mipmap/logo_emt"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:text="Favoritos"
+            android:textColor="@color/black"
+            android:textSize="@android:dimen/app_icon_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/imageView3"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/btnBuscarParada"
@@ -68,7 +96,10 @@ tools:context=".menuPrincipal.favoritos.FavoritoFragment">
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="@id/gh2"
-        app:layout_constraintTop_toTopOf="@id/gh1" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/gh1"
+        app:layout_constraintVertical_bias="0.0" />
 
 
 

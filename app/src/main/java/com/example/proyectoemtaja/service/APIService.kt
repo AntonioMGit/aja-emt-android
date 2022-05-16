@@ -2,6 +2,7 @@ package com.example.proyectoemtaja.service
 
 import com.example.proyectoemtaja.models.timeArrival.TimeArrivalBus
 import com.example.proyectoemtaja.models.listaParadas.ListaParadas
+import com.example.proyectoemtaja.models.peticiones.ActualizarUsuarioRequest
 import com.example.proyectoemtaja.models.peticiones.FavoritoResponse
 import com.example.proyectoemtaja.models.peticiones.LoginResponse
 import com.example.proyectoemtaja.models.usuario.Usuario
@@ -27,7 +28,15 @@ interface APIService {
 
 
     @PUT(UrlServidor.URL_ACTUALIZAR_USUARIO)
-    suspend fun actualizarUsuario(@Header(Cabeceras.HEADER_TOKEN) token: String,@Body usuario:Usuario): Response<Usuario>
+    suspend fun actualizarUsuario(
+        @Header(Cabeceras.HEADER_TOKEN) token: String,
+        @Body usuario:ActualizarUsuarioRequest
+    ): Response<Usuario>
+
+    @GET(UrlServidor.URL_BUSCAR_USUARIO)
+    suspend fun buscarUsuario(
+        @Header(Cabeceras.HEADER_TOKEN) token: String
+    ): Response<Usuario>
 
     @POST(UrlServidor.URL_INSERTAR_USUARIO)
     suspend fun insertUsuario(

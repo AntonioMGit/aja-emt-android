@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputType
+import android.view.MotionEvent
+import android.view.View
 import android.widget.*
 import com.example.proyectoemtaja.config.MD5
 import com.example.proyectoemtaja.databinding.ActivityRegisterBinding
@@ -18,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.Exception
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -53,10 +57,19 @@ class RegisterActivity : AppCompatActivity() {
         nombre = binding.etNombre
         apellidos = binding.etApellidos
 
+        etFechaNacimiento.editText!!.inputType = InputType.TYPE_NULL
+        etFechaNacimiento.editText!!.keyListener = null
+
         //Listener de la fecha
-        etFechaNacimiento.editText!!.setOnClickListener {
-            showDatePickerDialog()
-        }
+        etFechaNacimiento.editText!!.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(view: View?, motionEvent: MotionEvent?): Boolean {
+                if (motionEvent!!.action == MotionEvent.ACTION_UP) {
+                    showDatePickerDialog()
+                }
+                return false
+            }
+
+        })
 
         //lo pongo para probar que lo demas funciona
         //habria que quitarlo
@@ -77,14 +90,57 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun registrar() {
         if (todosLlenos()) {
-            if (password1.editText!!.text.toString() == password2.editText!!.text.toString()) {
+            if (todosValidos()) {
                 sendRequest()
-            } else {
-                Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_LONG).show()
-                limpiarClaves()
             }
         } else {
             Toast.makeText(this, "Rellena todos lo campos", Toast.LENGTH_LONG)
+        }
+    }
+
+    private fun todosValidos(): Boolean {
+
+        if (!Constantes.regexCorreo.matches(correo.editText!!.text.toString())) {
+            Toast.makeText(this, "Formato de correo no válido", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (nombre.editText!!.text.length > 20) {
+            Toast.makeText(this, "El tamaño del nombre supera los 20 caracteres", Toast.LENGTH_SHORT).show()
+            return false;
+        }
+
+        if (apellidos.editText!!.text.length > 30) {
+            Toast.makeText(this, "El tamaño de los apellidos supera los 30 caracteres", Toast.LENGTH_SHORT).show()
+            return false;
+        }
+
+        if (!valeFecha(etFechaNacimiento.editText!!.text.toString())) {
+            Toast.makeText(this, "La fecha no es válida", Toast.LENGTH_SHORT).show()
+            return false;
+        }
+
+        if (!Constantes.regexClave.matches(password1.editText!!.text.toString())) {
+            Toast.makeText(this, "La contraseña no sigue los requisitos", Toast.LENGTH_SHORT).show()
+            limpiarClaves()
+            return false
+        }
+
+        if (!(password1.editText!!.text.toString() == password2.editText!!.text.toString())) {
+            Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_LONG).show()
+            limpiarClaves()
+            return false
+        }
+
+        return true
+
+    }
+
+    private fun valeFecha(text: String): Boolean {
+        return try {
+            LocalDate.parse(text, Constantes.FORMATO_FECHA_MOSTRAR).isBefore(LocalDate.now())
+        } catch (e: Exception) {
+            false
         }
     }
 
@@ -107,34 +163,15 @@ class RegisterActivity : AppCompatActivity() {
                     clave = MD5.encriptar(password1.editText!!.text.toString()),
                     nombre = nombre.editText!!.text.toString(),
                     apellidos = apellidos.editText!!.text.toString(),
-                    fechaNacimiento = etFechaNacimiento.editText!!.text.toString(),
+                    fechaNacimiento = LocalDate.parse(etFechaNacimiento.editText!!.text.toString(), Constantes.FORMATO_FECHA_MOSTRAR).format(Constantes.FORMATO_FECHA_ENVIAR),
                     sexo = Sexo.sacarSexo(spSexo.editText!!.text.toString())
                 )
             )
 
-            if (call.isSuccessful) {
-                msg = "Insertado correctamente."
-                //coge el usuario y la contraseña ENCRIPTADA para evitarse tener que meter el usuario y la contraseña all t tiempo
-                //y asi loguear directamente hasta que de al boton de cerrar sesion
-                val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                val editor = sharedPreferences.edit()
-                editor.apply {
-                    putString(Constantes.EMAIL_SHARED_PREFERENCES, correo.editText!!.text.toString())
-                    putString(Constantes.PASSWORD_SHARED_PREFERENCES, MD5.encriptar(password1.editText!!.text.toString()))
-                }.apply()
-
-                //tras insertar el usuario loguea directamente
-                //DESCOMENTAR LA LINEA DE ABAJO
-                //startActivity(Intent(applicationContext, FavoritoActivity::class.java))
-
-            } else {
-                var codigoError = call.code()
-
-                if (codigoError == 400) { //error 400 lo tira el servidor cuando ya esta insertado ese usuario.
-                    msg = "El usuario ya exite."
-                } else { //si tira otro por la razon que sea
-                    msg = "No se ha podido realizar la inserción"
-                }
+            msg = when (call.code()) {
+                201 -> "Insertado correctamente"
+                400 -> "El usuario ya existe"
+                else -> "No se ha podido realizar la inserción"
             }
 
             runOnUiThread {
@@ -168,9 +205,8 @@ class RegisterActivity : AppCompatActivity() {
     private fun onDateSelected(day: Int, month: Int, year: Int) {
 
         fechaSeleccionada = LocalDate.of(year, (month + 1), day)
-        etFechaNacimiento.editText!!.setText(fechaSeleccionada.format(Constantes.FORMATO_FECHA).toString())
+        etFechaNacimiento.editText!!.setText(fechaSeleccionada.format(Constantes.FORMATO_FECHA_MOSTRAR).toString())
 
-        Toast.makeText(this, "Fecha: ${fechaSeleccionada.format(Constantes.FORMATO_FECHA).toString()}", Toast.LENGTH_LONG).show()
     }
 
     private fun initSpinner() {

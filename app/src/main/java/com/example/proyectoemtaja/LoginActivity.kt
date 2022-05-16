@@ -80,6 +80,9 @@ class LoginActivity : AppCompatActivity() {
                 e.message?.let { Log.e("Error", it) }
                 e.printStackTrace()
             }
+
+            Log.d("Debug", "He probado el token")
+
         }
 
     }
