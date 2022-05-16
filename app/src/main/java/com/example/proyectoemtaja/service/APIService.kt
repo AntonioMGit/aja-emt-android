@@ -2,6 +2,7 @@ package com.example.proyectoemtaja.service
 
 import com.example.proyectoemtaja.models.timeArrival.TimeArrivalBus
 import com.example.proyectoemtaja.models.listaParadas.ListaParadas
+import com.example.proyectoemtaja.models.paradasLinea.ParadasLinea
 import com.example.proyectoemtaja.models.peticiones.ActualizarUsuarioRequest
 import com.example.proyectoemtaja.models.peticiones.FavoritoResponse
 import com.example.proyectoemtaja.models.peticiones.LoginResponse
@@ -26,6 +27,12 @@ interface APIService {
         @Header(Cabeceras.HEADER_TOKEN) token: String
     ): Response<ListaParadas>
 
+    @GET
+    suspend fun getParadasLinea(
+        @Url url: String,
+        @Header(Cabeceras.HEADER_TOKEN) token: String,
+        @Header(Cabeceras.HEADER_USUARIO) idUsuario: String
+    ): Response<ParadasLinea>
 
     @PUT(UrlServidor.URL_ACTUALIZAR_USUARIO)
     suspend fun actualizarUsuario(

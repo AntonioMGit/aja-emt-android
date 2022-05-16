@@ -124,6 +124,9 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
                             .icon(BitmapDescriptorFactory.fromResource(R.mipmap.mini_pin_bus_azul_claro))
                     )
                 }
+            }else{
+                Log.e("Error", "No hay lista de paradas")
+                //cargarla?
             }
         } catch (e: Exception) {
             Log.e("Error", "Error cargar datos en el mapa")

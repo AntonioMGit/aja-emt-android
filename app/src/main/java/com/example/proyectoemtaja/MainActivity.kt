@@ -2,7 +2,6 @@ package com.example.proyectoemtaja
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -33,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var imgBus: ImageView
 
     val lista = ArrayList<Map.Entry<String, List<Arrive>>>()
+    val listaDirecciones = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,17 +41,38 @@ class MainActivity : AppCompatActivity() {
 
         rvBuses = binding.rvBusesParada
         rvBuses.layoutManager = LinearLayoutManager(this)
-        rvBuses.adapter = BusParadaAdapter(lista)
+
+        var adapter = BusParadaAdapter(lista)
+
+        adapter.setOnItemClickListener(object : BusParadaAdapter.OnItemClickListener{
+            override fun onItemClick(position: Int) {
+                buscarLinea(position)
+            }
+        })
+
+        rvBuses.adapter = adapter
 
         tvIdParada = binding.tvBuscarParadaId
         tvNombre = binding.tvBuscarParadaNombre
         imgBus = binding.imgFotoBus
 
 
-
         var nParada: String = intent.getStringExtra("nParada")!!
 
         searchParada(nParada.toString())
+
+    }
+
+    fun buscarLinea(pos: Int) {
+        var lin = lista[pos]
+        var dir = listaDirecciones[pos]
+
+        Toast.makeText(this@MainActivity, lin.key.toString(), Toast.LENGTH_SHORT).show()
+
+        var intent = Intent(this, ListaParadasLinea::class.java)
+        intent.putExtra("nLinea", lin.key.toString())
+        intent.putExtra("dir", dir)
+        startActivity(intent)
 
     }
 
@@ -74,15 +95,24 @@ class MainActivity : AppCompatActivity() {
                 idUsuario = sharedPreferences.getString(Constantes.EMAIL_SHARED_PREFERENCES, "").toString()
             )
 
+            Log.e("url","------>" + UrlServidor.urlTiempoAutobus(parada).toString())
+            Log.e("token","------>" + "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString())
+            Log.e("id","------>" + sharedPreferences.getString(Constantes.EMAIL_SHARED_PREFERENCES, "").toString())
+
             if (call.isSuccessful) {
                 Log.d("Debug", "Entramos a actualizar datos")
                 try {
                     val timeArrivalBus = call.body() //exceptioon
                     var mapa = timeArrivalBus?.data?.get(0)?.arrive?.stream()?.collect(Collectors.groupingBy { it.line })
                     lista.clear()
+                    var i = 0
+                    var stopLines = timeArrivalBus?.data?.get(0)?.stopInfo?.get(0)?.stopLines?.data
                     mapa?.forEach {
                         if (it.value.size > 0) {
                             lista.add(it)
+                            //para coger las direcciones a la que va (A o B)
+                            listaDirecciones.add(stopLines?.get(i)?.to.toString())
+                            i++
                         }
                     }
                     lista.sortWith(Comparator { entry, entry2 ->
@@ -108,7 +138,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 Log.d("Debug", "RV actualizados")
             } else {
-                Log.e("Debug", "Error al buscar")
+                Log.e("Debug", "Error al buscar parada")
+                //Toast.makeText(this@MainActivity, "No se ha podido buscar la parada.", Toast.LENGTH_SHORT).show()
                 Log.e("Debug", call.message())
             }
 

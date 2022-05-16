@@ -4,10 +4,14 @@ class UrlServidor {
 
     companion object {
         // val URL_BASE: String = "http://172.26.110.199:8080"
-        const val URL_BASE: String = "http://192.168.1.132:8080"
+        const val URL_BASE: String = "http://192.168.1.41:8080"
 
         fun urlTiempoAutobus (parada: String): String {
             return "/controladores-emt/consultar-parada/$parada"
+        }
+
+        fun urlParadasLinea (linea: String, dir: String): String {
+            return "/controladores-emt/consultar-linea/$linea/$dir"
         }
 
         const val URL_LISTAR_PARADAS = "/controladores-emt/listar-paradas"

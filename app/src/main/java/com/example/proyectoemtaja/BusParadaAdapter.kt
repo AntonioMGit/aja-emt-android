@@ -1,5 +1,6 @@
 package com.example.proyectoemtaja
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +13,28 @@ class BusParadaAdapter(private val datos: ArrayList<Map.Entry<String, List<Arriv
 
     private var listDatos = datos
 
+    private var listener: OnItemClickListener? =  null
+
+    interface OnItemClickListener{
+        fun onItemClick(position: Int)
+    }
+
+    fun setOnItemClickListener(listener: OnItemClickListener){
+        this.listener = listener
+    }
+
     //Clase encargada de asignarle los datos al recycleviewer
-    class ViewHolderDatos(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolderDatos(itemView: View, listener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {
+
+        init {
+            itemView.setOnClickListener{
+                if (listener != null) {
+                    listener.onItemClick(adapterPosition)
+                }else{
+                    Log.e("Error", "No coge el listener")
+                }
+            }
+        }
 
         val tercero = itemView.findViewById(R.id.tvTercerBusParadas) as TextView
         val segundo = itemView.findViewById(R.id.tvSegundoBusParadas) as TextView
@@ -23,6 +44,8 @@ class BusParadaAdapter(private val datos: ArrayList<Map.Entry<String, List<Arriv
 
         val direccionBus = itemView.findViewById<TextView>(R.id.tvDireccionBusParadas)
         val nombreBus = itemView.findViewById<TextView>(R.id.tvNombreBusParadas)
+
+        //val cvNumBus = itemView.findViewById(R.id.cardViewNumBus) as CardView
 
         //Asigna los datos a cada seccion del recycleviewer
         fun asignarDatos(tupla: Map.Entry<String, List<Arrive>>) {
@@ -40,7 +63,6 @@ class BusParadaAdapter(private val datos: ArrayList<Map.Entry<String, List<Arriv
             IntStream.range(0, if (values.size > 3) 3 else values.size).forEach {
                 lista[it].text = "${((values[it].estimateArrive / 60) as Int)} min"
             }
-
         }
     }
 
@@ -51,7 +73,7 @@ class BusParadaAdapter(private val datos: ArrayList<Map.Entry<String, List<Arriv
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderDatos {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_bus_parada, null, false)
-        return ViewHolderDatos(view)
+        return ViewHolderDatos(view, listener)
     }
 
     override fun getItemCount(): Int {

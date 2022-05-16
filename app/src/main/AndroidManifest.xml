@@ -31,6 +31,9 @@
             android:name=".FavoritoActivity"
             android:exported="false"/>
         <activity
+            android:name=".ListaParadasLinea"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="false"
             android:label="Tiempos de espera"/>

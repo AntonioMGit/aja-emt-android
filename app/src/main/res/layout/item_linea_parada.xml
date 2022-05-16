@@ -88,7 +88,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintGuide_percent="0.53"
+            app:layout_constraintGuide_percent="0.95"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -130,7 +130,7 @@
             app:layout_constraintEnd_toStartOf="@id/gVer1" >
 
             <TextView
-                android:id="@+id/tvNombreBusParadas"
+                android:id="@+id/tvNombreBusParadas2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -150,9 +150,9 @@
         </androidx.cardview.widget.CardView>
 
         <TextView
-            android:id="@+id/tvPrimerBusParadas"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:id="@+id/tvDireccionLineasParadas"
+            android:layout_width="264dp"
+            android:layout_height="30dp"
             android:layout_gravity="center_vertical|left"
             android:text=""
             android:textColor="@color/black"
@@ -160,39 +160,13 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/gHor1"
             app:layout_constraintEnd_toStartOf="@id/gVer3"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/gVer2"
-            app:layout_constraintTop_toBottomOf="@id/gHor0" />
-
-        <TextView
-            android:id="@+id/tvSegundoBusParadas"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_gravity="center_vertical|left"
-            android:text=""
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/gHor0"
-            app:layout_constraintBottom_toTopOf="@id/gHor1"
-            app:layout_constraintStart_toEndOf="@id/gVer4"
-            app:layout_constraintEnd_toStartOf="@id/gVer5"/>
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
-            android:id="@+id/tvTercerBusParadas"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_gravity="center_vertical|left"
-            android:text=""
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/gHor0"
-            app:layout_constraintBottom_toTopOf="@id/gHor1"
-            app:layout_constraintStart_toEndOf="@id/gVer6"
-            app:layout_constraintEnd_toStartOf="@id/gVer7"/>
-
-        <TextView
-            android:id="@+id/tvDireccionBusParadas"
+            android:id="@+id/tvLineasParda"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_gravity="center_vertical|left"
@@ -200,10 +174,12 @@
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/gHor2"
             app:layout_constraintBottom_toTopOf="@id/gHor3"
+            app:layout_constraintEnd_toStartOf="@id/gVer7"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/gVer2"
-            app:layout_constraintEnd_toStartOf="@id/gVer7"/>
+            app:layout_constraintTop_toBottomOf="@id/gHor2"
+            app:layout_constraintVertical_bias="0.0" />
 
         <View
             android:layout_width="fill_parent"

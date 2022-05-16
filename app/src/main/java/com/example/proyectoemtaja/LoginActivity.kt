@@ -33,10 +33,10 @@ class LoginActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         probarToken()
 
-        super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         etContrasenia = binding.etContrasenia
@@ -128,9 +128,9 @@ class LoginActivity : AppCompatActivity() {
                             //putString("refreshToken", call.body()?.token.toString())
                         }.apply()
                     }else{
-                        //por si acaso se ponen en blanco si no se pulsa, el token se tiene que guardar si o si al loguear
+                        //por si acaso se pone pass en blanco , el token y el mail se tiene que guardar si o si al loguear
                         editor.apply {
-                            putString(Constantes.EMAIL_SHARED_PREFERENCES, "")
+                            putString(Constantes.EMAIL_SHARED_PREFERENCES, email)
                             putString(Constantes.PASSWORD_SHARED_PREFERENCES, "")
                             putString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES,
                                 call.body()?.token.toString())
@@ -185,7 +185,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 Log.d("Debug", "RV actualizados")
             } else {
-                Log.e("Debug", "Error al buscar")
+                Log.e("Debug", "Error al buscar cargar paradas")
             }
         }
     }
