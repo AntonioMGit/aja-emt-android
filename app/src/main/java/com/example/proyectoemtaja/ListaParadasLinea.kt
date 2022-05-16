@@ -15,6 +15,7 @@ import com.example.proyectoemtaja.models.paradasLinea.StopsParadasLinea
 import com.example.proyectoemtaja.models.timeArrival.Arrive
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Constantes
+import com.example.proyectoemtaja.utilities.ConversorCodigoEMT
 import com.example.proyectoemtaja.utilities.UrlServidor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +41,6 @@ class ListaParadasLinea : AppCompatActivity() {
         setContentView(binding.root)
 
         var nLinea: String = intent.getStringExtra("nLinea")!!
-        var codLinea: String = intent.getStringExtra("codLinea")!!
         var dirLetra: String = intent.getStringExtra("dir")!!
 
         var dir = "1"
@@ -65,7 +65,7 @@ class ListaParadasLinea : AppCompatActivity() {
         tvBuscarLineaId = binding.tvBuscarLineaId
         tvBuscarLineaDir = binding.tvBuscarLineaDir
 
-        searchLinea(nLinea.toString(), codLinea, dir.toString())
+        searchLinea(nLinea.toString(), dir.toString())
     }
 
     fun buscarParada(pos: Int){
@@ -85,12 +85,12 @@ class ListaParadasLinea : AppCompatActivity() {
             ).build()
     }
 
-    private fun searchLinea(nLinea: String, codLinea: String, dir: String) {
+    private fun searchLinea(nLinea: String, dir: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
             val call = getRetrofit().create(APIService::class.java).getParadasLinea(
-                url = UrlServidor.urlParadasLinea(codLinea, dir),
+                url = UrlServidor.urlParadasLinea(ConversorCodigoEMT.pasarANumeros(nLinea), dir),
                 token = "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString(),
                 idUsuario = sharedPreferences.getString(Constantes.EMAIL_SHARED_PREFERENCES, "").toString()
             )

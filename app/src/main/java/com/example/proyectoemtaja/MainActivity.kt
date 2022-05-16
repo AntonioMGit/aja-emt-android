@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity() {
 
     val lista = ArrayList<Map.Entry<String, List<Arrive>>>()
     val listaDirecciones = ArrayList<String>()
-    val listaCodigosLineas = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,13 +67,9 @@ class MainActivity : AppCompatActivity() {
     fun buscarLinea(pos: Int) {
         var lin = lista[pos]
         var dir = listaDirecciones[pos]
-        var codLineas = listaCodigosLineas[pos]
-
-        Toast.makeText(this@MainActivity, codLineas, Toast.LENGTH_SHORT).show()
 
         var intent = Intent(this, ListaParadasLinea::class.java)
         intent.putExtra("nLinea", lin.key.toString())
-        intent.putExtra("codLinea", codLineas)
         intent.putExtra("dir", dir)
         startActivity(intent)
 
@@ -116,7 +111,6 @@ class MainActivity : AppCompatActivity() {
                             //algunos buses como el E3 su codigo y el numero que se muestra es distinto
                             //E3 por ejemplo es 403
                             numParada = stopLines?.get(i)?.label.toString()
-                            listaCodigosLineas.add(buscarCodigoParada(numParada, stopLines))
                             i++
                         }
                     }
@@ -152,18 +146,6 @@ class MainActivity : AppCompatActivity() {
                 rvBuses.adapter?.notifyDataSetChanged()
             }
         }
-    }
-
-    private fun buscarCodigoParada(numParada: String, stopLines: ArrayList<Line>?): String {
-        var cod = ""
-
-        stopLines?.forEach {
-            if(it.label.equals(numParada)){
-                cod = it.line.toString()
-            }
-        }
-
-        return cod
     }
 }
 

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.models.paradasLinea.StopsParadasLinea
+import com.example.proyectoemtaja.utilities.ConversorCodigoEMT
 
 class ParadasLineaAdapter (private val datos: ArrayList<StopsParadasLinea>) : RecyclerView.Adapter<ParadasLineaAdapter.ViewHolderDatos>() {
 
@@ -51,7 +52,7 @@ class ParadasLineaAdapter (private val datos: ArrayList<StopsParadasLinea>) : Re
             paradas.dataLine.forEach{
                 //TODO: poner de otra forma?
                 //lista de lineas de bus que pasan por una parada
-                listaBusesQuePasan +=  it.toString() + " | "
+                listaBusesQuePasan +=  ConversorCodigoEMT.pasarALetras(it.toString()) + " | "
             }
             busesQuePasan.text = listaBusesQuePasan
         }
