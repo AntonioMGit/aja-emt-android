@@ -40,7 +40,6 @@ class ListaParadasLinea : AppCompatActivity() {
         setContentView(binding.root)
 
         var nLinea: String = intent.getStringExtra("nLinea")!!
-        var codLinea: String = intent.getStringExtra("codLinea")!!
         var dirLetra: String = intent.getStringExtra("dir")!!
 
         var dir = "1"
@@ -65,7 +64,7 @@ class ListaParadasLinea : AppCompatActivity() {
         tvBuscarLineaId = binding.tvBuscarLineaId
         tvBuscarLineaDir = binding.tvBuscarLineaDir
 
-        searchLinea(nLinea.toString(), codLinea, dir.toString())
+        searchLinea(nLinea.toString(), dir.toString())
     }
 
     fun buscarParada(pos: Int){
@@ -85,12 +84,12 @@ class ListaParadasLinea : AppCompatActivity() {
             ).build()
     }
 
-    private fun searchLinea(nLinea: String, codLinea: String, dir: String) {
+    private fun searchLinea(nLinea: String, dir: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
             val call = getRetrofit().create(APIService::class.java).getParadasLinea(
-                url = UrlServidor.urlParadasLinea(codLinea, dir),
+                url = UrlServidor.urlParadasLinea(nLinea, dir),
                 token = "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString(),
                 idUsuario = sharedPreferences.getString(Constantes.EMAIL_SHARED_PREFERENCES, "").toString()
             )
@@ -123,6 +122,7 @@ class ListaParadasLinea : AppCompatActivity() {
                 Log.d("Debug", "RV actualizados")
             } else {
                 Log.e("Debug", "Error al buscar paradas de una linea")
+                Toast.makeText(this@ListaParadasLinea, "No se han podido buscar las paradas.", Toast.LENGTH_SHORT).show()
                 Log.e("Debug", call.message())
             }
 
