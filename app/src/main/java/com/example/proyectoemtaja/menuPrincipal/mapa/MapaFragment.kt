@@ -108,7 +108,7 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
             if (Paradas.listaParadas != null) {
                 var paradas: ListaParadas = ListaParadas(Paradas.listaParadas!!)
 
-                for (i in 0..9) { //prueba con los 9 primeros
+                for (i in 4600..4770) { //prueba con los 9 primeros
                     var cosa = paradas.data.get(i)
 
                     Log.d("Debug", i.toString() + ": " + cosa.toString())

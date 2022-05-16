@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.databinding.ActivityMainBinding
 import com.example.proyectoemtaja.models.timeArrival.Arrive
+import com.example.proyectoemtaja.models.timeArrival.Line
 import com.example.proyectoemtaja.utilities.Constantes
 import com.example.proyectoemtaja.utilities.UrlServidor
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     val lista = ArrayList<Map.Entry<String, List<Arrive>>>()
     val listaDirecciones = ArrayList<String>()
+    val listaCodigosLineas = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,11 +68,13 @@ class MainActivity : AppCompatActivity() {
     fun buscarLinea(pos: Int) {
         var lin = lista[pos]
         var dir = listaDirecciones[pos]
+        var codLineas = listaCodigosLineas[pos]
 
-        Toast.makeText(this@MainActivity, lin.key.toString(), Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@MainActivity, codLineas, Toast.LENGTH_SHORT).show()
 
         var intent = Intent(this, ListaParadasLinea::class.java)
         intent.putExtra("nLinea", lin.key.toString())
+        intent.putExtra("codLinea", codLineas)
         intent.putExtra("dir", dir)
         startActivity(intent)
 
@@ -81,7 +85,6 @@ class MainActivity : AppCompatActivity() {
             .addConverterFactory(
                 GsonConverterFactory.create()
             ).build()
-
     }
 
     private fun searchParada(parada: String) {
@@ -95,16 +98,13 @@ class MainActivity : AppCompatActivity() {
                 idUsuario = sharedPreferences.getString(Constantes.EMAIL_SHARED_PREFERENCES, "").toString()
             )
 
-            Log.e("url","------>" + UrlServidor.urlTiempoAutobus(parada).toString())
-            Log.e("token","------>" + "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString())
-            Log.e("id","------>" + sharedPreferences.getString(Constantes.EMAIL_SHARED_PREFERENCES, "").toString())
-
             if (call.isSuccessful) {
                 Log.d("Debug", "Entramos a actualizar datos")
                 try {
                     val timeArrivalBus = call.body() //exceptioon
                     var mapa = timeArrivalBus?.data?.get(0)?.arrive?.stream()?.collect(Collectors.groupingBy { it.line })
                     lista.clear()
+                    var numParada = ""
                     var i = 0
                     var stopLines = timeArrivalBus?.data?.get(0)?.stopInfo?.get(0)?.stopLines?.data
                     mapa?.forEach {
@@ -112,6 +112,11 @@ class MainActivity : AppCompatActivity() {
                             lista.add(it)
                             //para coger las direcciones a la que va (A o B)
                             listaDirecciones.add(stopLines?.get(i)?.to.toString())
+
+                            //algunos buses como el E3 su codigo y el numero que se muestra es distinto
+                            //E3 por ejemplo es 403
+                            numParada = stopLines?.get(i)?.label.toString()
+                            listaCodigosLineas.add(buscarCodigoParada(numParada, stopLines))
                             i++
                         }
                     }
@@ -147,7 +152,18 @@ class MainActivity : AppCompatActivity() {
                 rvBuses.adapter?.notifyDataSetChanged()
             }
         }
+    }
 
+    private fun buscarCodigoParada(numParada: String, stopLines: ArrayList<Line>?): String {
+        var cod = ""
+
+        stopLines?.forEach {
+            if(it.label.equals(numParada)){
+                cod = it.line.toString()
+            }
+        }
+
+        return cod
     }
 }
 
