@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.databinding.ActivityMainBinding
+import com.example.proyectoemtaja.models.peticiones.BorrarFavoritoRequest
 import com.example.proyectoemtaja.models.peticiones.Favorito
 import com.example.proyectoemtaja.models.timeArrival.Arrive
 import com.example.proyectoemtaja.models.timeArrival.Line
@@ -130,7 +131,6 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("Aceptar", object : DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, which: Int) {
                     borrarFavorito(nParada)
-                    Toast.makeText(this@MainActivity, "Borrar", Toast.LENGTH_SHORT).show()
                 }
             })
             .setNegativeButton("Cancelar", null)
@@ -271,7 +271,7 @@ class MainActivity : AppCompatActivity() {
                     Context.MODE_PRIVATE
                 )
                 var call = getRetrofit().create(APIService::class.java).borrarFavorito(
-                    idParada = idParada,
+                    favorito = BorrarFavoritoRequest(idParada),
                     token = "Bearer " + sharedPreferences.getString(
                         Constantes.ACCESS_TOKEN_SHARED_PREFERENCES,
                         ""

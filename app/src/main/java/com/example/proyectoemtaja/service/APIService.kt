@@ -4,6 +4,7 @@ import com.example.proyectoemtaja.models.timeArrival.TimeArrivalBus
 import com.example.proyectoemtaja.models.listaParadas.ListaParadas
 import com.example.proyectoemtaja.models.paradasLinea.ParadasLinea
 import com.example.proyectoemtaja.models.peticiones.ActualizarUsuarioRequest
+import com.example.proyectoemtaja.models.peticiones.BorrarFavoritoRequest
 import com.example.proyectoemtaja.models.peticiones.Favorito
 import com.example.proyectoemtaja.models.peticiones.LoginResponse
 import com.example.proyectoemtaja.models.usuario.Usuario
@@ -80,10 +81,9 @@ interface APIService {
         @Body favorito: Favorito
     ): Response<Favorito>
 
-    @DELETE(UrlServidor.URL_BORRAR_FAVORITO)
-    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = UrlServidor.URL_BORRAR_FAVORITO, hasBody = true)
     suspend fun borrarFavorito(
         @Header(Cabeceras.HEADER_TOKEN) token: String,
-        @Field("idParada") idParada: String
+        @Body favorito: BorrarFavoritoRequest
     ): Response<Void>
 }
