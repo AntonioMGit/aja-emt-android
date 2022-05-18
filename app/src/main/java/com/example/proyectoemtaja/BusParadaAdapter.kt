@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.models.timeArrival.Arrive
 import java.util.stream.IntStream
@@ -27,7 +28,7 @@ class BusParadaAdapter(private val datos: ArrayList<Map.Entry<String, List<Arriv
     class ViewHolderDatos(itemView: View, listener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {
 
         init {
-            itemView.setOnClickListener{
+            itemView.findViewById<CardView>(R.id.cardViewNumBus).setOnClickListener{
                 if (listener != null) {
                     listener.onItemClick(adapterPosition)
                 }else{
@@ -61,7 +62,9 @@ class BusParadaAdapter(private val datos: ArrayList<Map.Entry<String, List<Arriv
 
             //Una especide de bucle for que está limitado si o si a 3 pero que recorre de 0 al size de la coleccion
             IntStream.range(0, if (values.size > 3) 3 else values.size).forEach {
-                lista[it].text = "${((values[it].estimateArrive / 60) as Int)} min"
+                var tiempo: Int = (values[it].estimateArrive / 60)
+
+                lista[it].text = "${if (tiempo > 90) {"+ 90"} else { tiempo.toString() }} min"
             }
         }
     }

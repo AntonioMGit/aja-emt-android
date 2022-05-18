@@ -5,12 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.proyectoemtaja.models.peticiones.FavoritoResponse
-import com.example.proyectoemtaja.models.timeArrival.Arrive
-import java.util.stream.IntStream
+import com.example.proyectoemtaja.models.peticiones.Favorito
 
 
-class FavoritoAdapter(private val datos: ArrayList<FavoritoResponse>) : RecyclerView.Adapter<FavoritoAdapter.ViewHolderDatos>() {
+class FavoritoAdapter(private val datos: ArrayList<Favorito>) : RecyclerView.Adapter<FavoritoAdapter.ViewHolderDatos>() {
 
     private lateinit var listener: OnItemClickListener
 
@@ -36,7 +34,7 @@ class FavoritoAdapter(private val datos: ArrayList<FavoritoResponse>) : Recycler
             }
         }
         //Asigna los datos a cada seccion del recycleviewer
-        fun asignarDatos(favorito: FavoritoResponse) {
+        fun asignarDatos(favorito: Favorito) {
             idParada.text = favorito.idParada
             nombreParada.text = favorito.nombreParada
         }

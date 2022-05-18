@@ -52,7 +52,7 @@ class ParadasLineaAdapter (private val datos: ArrayList<StopsParadasLinea>) : Re
             paradas.dataLine.forEach{
                 //TODO: poner de otra forma?
                 //lista de lineas de bus que pasan por una parada
-                listaBusesQuePasan +=  ConversorCodigoEMT.pasarALetras(it.toString()) + " | "
+                listaBusesQuePasan +=  ConversorCodigoEMT.pasarALetras(it.toString()) + "  "
             }
             busesQuePasan.text = listaBusesQuePasan
         }

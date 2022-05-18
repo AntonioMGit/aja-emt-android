@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintGuide_percent="0.25"
+            app:layout_constraintGuide_percent="0.2"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintGuide_percent="0.3"
+            app:layout_constraintGuide_percent="0.25"
             app:layout_constraintStart_toStartOf="parent" />
 
 
@@ -71,7 +71,6 @@
             android:backgroundTint="#007ADD"
             app:cardCornerRadius="10dp"
             android:layout_gravity="center"
-            android:layout_margin="8dp"
             android:gravity="center"
             android:text="XXXX"
             android:textSize="21sp"
@@ -87,10 +86,9 @@
             android:layout_height="0dp"
             app:cardCornerRadius="10dp"
             android:layout_gravity="center"
-            android:layout_margin="8dp"
             android:gravity="left|center"
             android:textColor="@color/black"
-            android:textSize="21sp"
+            android:textSize="17dp"
             android:textStyle="bold"
             android:text="Nombre de parada"
             app:layout_constraintTop_toBottomOf="@id/gHor0"

@@ -191,20 +191,44 @@
             app:layout_constraintStart_toEndOf="@id/gVer6"
             app:layout_constraintEnd_toStartOf="@id/gVer7"/>
 
+        <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/gHor3"
+            app:layout_constraintEnd_toStartOf="@+id/gVer7"
+            app:layout_constraintStart_toEndOf="@id/gVer2"
+            app:layout_constraintTop_toBottomOf="@id/gHor2">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvDireccionBusParadas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="Dieccion"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+        <!--
         <TextView
             android:id="@+id/tvDireccionBusParadas"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_gravity="center_vertical|left"
+            android:gravity="center_vertical"
             android:text=""
             android:textColor="@color/black"
-            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/gHor2"
             app:layout_constraintBottom_toTopOf="@id/gHor3"
             app:layout_constraintStart_toEndOf="@id/gVer2"
             app:layout_constraintEnd_toStartOf="@id/gVer7"/>
-
+-->
         <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"

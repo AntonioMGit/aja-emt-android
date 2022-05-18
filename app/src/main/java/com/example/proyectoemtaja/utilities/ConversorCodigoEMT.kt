@@ -92,6 +92,8 @@ object ConversorCodigoEMT {
             "T62" -> codFinal = "457"
             "H1" -> codFinal = "481"
             // todo 501 a 528	Líneas nocturnas: N1 a N28, siendo la N27 (=527) la línea Exprés Aeropuerto en su servicio nocturno
+            "N7" -> codFinal = "507"
+
             //in 501..528 -> codFinal = "N" + (intInicial-500).toString()
             "M1" -> codFinal = "601"
             //TODO: 700 a 799	Servicios Especiales, casi siempre denominados simplemente «SE»

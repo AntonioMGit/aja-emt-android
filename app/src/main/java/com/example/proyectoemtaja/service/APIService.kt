@@ -4,7 +4,7 @@ import com.example.proyectoemtaja.models.timeArrival.TimeArrivalBus
 import com.example.proyectoemtaja.models.listaParadas.ListaParadas
 import com.example.proyectoemtaja.models.paradasLinea.ParadasLinea
 import com.example.proyectoemtaja.models.peticiones.ActualizarUsuarioRequest
-import com.example.proyectoemtaja.models.peticiones.FavoritoResponse
+import com.example.proyectoemtaja.models.peticiones.Favorito
 import com.example.proyectoemtaja.models.peticiones.LoginResponse
 import com.example.proyectoemtaja.models.usuario.Usuario
 import com.example.proyectoemtaja.utilities.Cabeceras
@@ -18,8 +18,7 @@ interface APIService {
     @GET
     suspend fun getTimeArrivalBus(
         @Url url: String,
-        @Header(Cabeceras.HEADER_TOKEN) token: String,
-        @Header(Cabeceras.HEADER_USUARIO) idUsuario: String
+        @Header(Cabeceras.HEADER_TOKEN) token: String
     ): Response<TimeArrivalBus>
 
     @GET( UrlServidor.URL_LISTAR_PARADAS)
@@ -54,7 +53,7 @@ interface APIService {
     @FormUrlEncoded
     suspend fun login(
         @Field(Cabeceras.CAMPO_USUARIO) user: String,
-        @Field(Cabeceras.CAMPO_PASSWORD) password: String/*@Body request:LoginRequest*/
+        @Field(Cabeceras.CAMPO_PASSWORD) password: String
     ): Response<LoginResponse>
 
     @GET(UrlServidor.URL_PROBAR_TOKEN)
@@ -64,7 +63,27 @@ interface APIService {
 
     @GET(UrlServidor.URL_LISTAR_FAVORITOS)
     suspend fun getFavoritos(
-        @Header(Cabeceras.HEADER_USUARIO) idUsuario: String,
         @Header(Cabeceras.HEADER_TOKEN) token: String
-    ): Response<ArrayList<FavoritoResponse>>
+    ): Response<ArrayList<Favorito>>
+
+    //Peticiones de favoritos
+
+    @POST(UrlServidor.URL_INSERTAR_FAVORITO)
+    suspend fun insertarFavorito(
+        @Header(Cabeceras.HEADER_TOKEN) token: String,
+        @Body favorito: Favorito
+    ): Response<Favorito>
+
+    @PUT(UrlServidor.URL_ACTUALIZAR_FAVORITO)
+    suspend fun actualizarFavorito(
+        @Header(Cabeceras.HEADER_TOKEN) token: String,
+        @Body favorito: Favorito
+    ): Response<Favorito>
+
+    @DELETE(UrlServidor.URL_BORRAR_FAVORITO)
+    @FormUrlEncoded
+    suspend fun borrarFavorito(
+        @Header(Cabeceras.HEADER_TOKEN) token: String,
+        @Field("idParada") idParada: String
+    ): Response<Void>
 }
