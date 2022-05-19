@@ -53,7 +53,7 @@ object ConversorCodigoEMT {
     }
 
     //convierte codigo con letras en codigo de numeros
-    public fun pasarANumeros(codInicial: String): String {
+    fun pasarANumeros(codInicial: String): String {
         var codFinal = ""
 
         //https://es.wikipedia.org/wiki/Anexo:L%C3%ADneas_de_la_EMT_Madrid#N%C3%BAmeros_usados_internamente
@@ -91,8 +91,36 @@ object ConversorCodigoEMT {
             "T41" -> codFinal = "456"
             "T62" -> codFinal = "457"
             "H1" -> codFinal = "481"
+
             // todo 501 a 528	Líneas nocturnas: N1 a N28, siendo la N27 (=527) la línea Exprés Aeropuerto en su servicio nocturno
+            "N1" -> codFinal = "501"
+            "N2" -> codFinal = "502"
+            "N3" -> codFinal = "503"
+            "N4" -> codFinal = "504"
+            "N5" -> codFinal = "505"
+            "N6" -> codFinal = "506"
             "N7" -> codFinal = "507"
+            "N8" -> codFinal = "508"
+            "N9" -> codFinal = "509"
+            "N10" -> codFinal = "510"
+            "N11" -> codFinal = "511"
+            "N12" -> codFinal = "512"
+            "N13" -> codFinal = "513"
+            "N14" -> codFinal = "514"
+            "N15" -> codFinal = "515"
+            "N16" -> codFinal = "516"
+            "N17" -> codFinal = "517"
+            "N18" -> codFinal = "518"
+            "N19" -> codFinal = "519"
+            "N20" -> codFinal = "520"
+            "N21" -> codFinal = "521"
+            "N22" -> codFinal = "522"
+            "N23" -> codFinal = "523"
+            "N24" -> codFinal = "524"
+            "N25" -> codFinal = "525"
+            "N26" -> codFinal = "526"
+            "N27" -> codFinal = "527"
+            "N28" -> codFinal = "528"
 
             //in 501..528 -> codFinal = "N" + (intInicial-500).toString()
             "M1" -> codFinal = "601"
