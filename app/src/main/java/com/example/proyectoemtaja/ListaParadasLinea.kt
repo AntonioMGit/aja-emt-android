@@ -5,12 +5,12 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.databinding.ActivityListaParadasLineaBinding
-import com.example.proyectoemtaja.databinding.ActivityMainBinding
 import com.example.proyectoemtaja.models.paradasLinea.StopsParadasLinea
 import com.example.proyectoemtaja.models.timeArrival.Arrive
 import com.example.proyectoemtaja.service.APIService
@@ -31,6 +31,8 @@ class ListaParadasLinea : AppCompatActivity() {
     private lateinit var rvListaParadasLinea: RecyclerView
     private lateinit var tvBuscarLineaId: TextView
     private lateinit var tvBuscarLineaDir: TextView
+
+    private lateinit var imgError: View
 
     val lista = ArrayList<StopsParadasLinea>()
 
@@ -61,9 +63,9 @@ class ListaParadasLinea : AppCompatActivity() {
         rvListaParadasLinea.layoutManager = LinearLayoutManager(this)
         rvListaParadasLinea.adapter = adapter
 
-
         tvBuscarLineaId = binding.tvBuscarLineaId
         tvBuscarLineaDir = binding.tvBuscarLineaDir
+        imgError = binding.imgError
 
         searchLinea(nLinea.toString(), dir.toString())
     }
@@ -87,48 +89,51 @@ class ListaParadasLinea : AppCompatActivity() {
 
     private fun searchLinea(nLinea: String, dir: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+            var runnable: Runnable = Runnable {
+                imgError.visibility = View.VISIBLE
+            }
 
-            val call = getRetrofit().create(APIService::class.java).getParadasLinea(
-                url = UrlServidor.urlParadasLinea(ConversorCodigoEMT.pasarANumeros(nLinea), dir),
-                token = "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString(),
-                idUsuario = sharedPreferences.getString(Constantes.EMAIL_SHARED_PREFERENCES, "").toString()
-            )
+            try {
+                val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
-            if (call.isSuccessful) {
-                Log.d("Debug", "Entramos a buscar paradas de linea " + nLinea + " Dir: " + dir)
+                val call = getRetrofit().create(APIService::class.java).getParadasLinea(
+                    url = UrlServidor.urlParadasLinea(ConversorCodigoEMT.pasarANumeros(nLinea), dir),
+                    token = "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString(),
+                    idUsuario = sharedPreferences.getString(Constantes.EMAIL_SHARED_PREFERENCES, "").toString()
+                )
 
-                try {
-                    val todoParadasLinea = call.body() //excetcion
+                if (call.isSuccessful) {
+                    Log.d("Debug", "Entramos a buscar paradas de linea " + nLinea + " Dir: " + dir)
 
-                    val stopsLinea = todoParadasLinea?.data?.get(0)?.stops
 
-                    lista.clear()
+                        val todoParadasLinea = call.body() //excetcion
 
-                    stopsLinea?.forEach {
-                        lista.add(it)
-                    }
+                        val stopsLinea = todoParadasLinea?.data?.get(0)?.stops
 
-                    //Se tiene que cambiar
-                    runOnUiThread {
-                        tvBuscarLineaId.text = "Paradas de la línea " + nLinea
-                        tvBuscarLineaDir.text = "De: " + lista.get(0).name + " A: " + lista.get(lista.size-1).name
-                    }
+                        lista.clear()
 
-                    Log.d("Debug", "Lista paradas cargada")
+                        stopsLinea?.forEach {
+                            lista.add(it)
+                        }
 
-                } catch (e: Exception) {
-                    Log.e("Error", "Error al actializar datos")
+                        runnable = Runnable {
+                            tvBuscarLineaId.text = "Paradas de la línea " + nLinea
+                            tvBuscarLineaDir.text = "De: " + lista.get(0).name + " A: " + lista.get(lista.size-1).name
+                            rvListaParadasLinea.adapter?.notifyDataSetChanged()
+                        }
+
+                        Log.d("Debug", "Lista paradas cargada")
+
+
+                } else {
+                    Log.e("Debug", "Error al buscar paradas de una linea")
+                    Log.e("Debug", call.message())
                 }
-                Log.d("Debug", "RV actualizados")
-            } else {
-                Log.e("Debug", "Error al buscar paradas de una linea")
-                Log.e("Debug", call.message())
+            } catch (e: Exception) {
+            Log.e("Error", "Error al actializar datos")
             }
 
-            runOnUiThread {
-                rvListaParadasLinea.adapter?.notifyDataSetChanged()
-            }
+            runOnUiThread(runnable)
         }
     }
 

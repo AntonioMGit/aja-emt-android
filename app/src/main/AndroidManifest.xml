@@ -10,7 +10,7 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Emt AJA"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ProyectoEmtAja"
@@ -21,35 +21,37 @@
             android:name=".ActualizarActivity"
             android:exported="false"
             android:label="Actualización de usuarios"
-            android:windowSoftInputMode="stateVisible|adjustResize"/>
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".MenuPrincipalActivity"
             android:exported="false"
-            android:label="@string/title_activity_menu_principal" />
-        <activity
-            android:name=".FavoritoActivity"
-            android:exported="false"/>
+            android:label="@string/title_activity_menu_principal"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".ListaParadasLinea"
-            android:exported="false" />
+            android:label="Lista de paradas"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainActivity"
             android:exported="false"
-            android:label="Tiempos de espera"/>
-        <activity
-            android:name=".MapsActivity"
-            android:exported="true"/>
+            android:label="Tiempos de espera"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".RegisterActivity"
             android:exported="true"
             android:label="Registro"
-            android:windowSoftInputMode="stateVisible|adjustResize"/>
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".LoginActivity"
             android:exported="true"
             android:label="Login"
-            android:windowSoftInputMode="stateVisible|adjustResize">
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

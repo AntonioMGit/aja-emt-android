@@ -22,7 +22,6 @@ enum class Sexo {
                 HOMBRE  -> STRING_HOMRBE
                 MUJER -> STRING_MUJER
                 NO_ESPECIFICADO -> STRING_NO_ESPECIFICADO
-                else -> STRING_HOMRBE
             }
         }
     }

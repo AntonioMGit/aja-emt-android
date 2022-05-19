@@ -3,14 +3,18 @@ package com.example.proyectoemtaja
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.service.APIService
@@ -18,7 +22,9 @@ import com.example.proyectoemtaja.databinding.ActivityMainBinding
 import com.example.proyectoemtaja.models.peticiones.BorrarFavoritoRequest
 import com.example.proyectoemtaja.models.peticiones.Favorito
 import com.example.proyectoemtaja.models.timeArrival.Arrive
+import com.example.proyectoemtaja.models.timeArrival.IncidentData
 import com.example.proyectoemtaja.models.timeArrival.Line
+import com.example.proyectoemtaja.models.timeArrival.TimeArrivalBus
 import com.example.proyectoemtaja.utilities.Constantes
 import com.example.proyectoemtaja.utilities.UrlServidor
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -41,11 +47,25 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvIdParada: TextView
     private lateinit var imgBus: ImageView
 
+    private lateinit var imgError: View
+
     private var botonActivo: Boolean = true
+    private var timeArrivalBus: TimeArrivalBus? = null
 
     //Dialog
     private lateinit var btnGuardar: Button
     private lateinit var etNombre: TextInputLayout
+
+    //Dialog alerta
+    private lateinit var tvTitulo: TextView
+    private lateinit var tvDesde: TextView
+    private lateinit var tvHasta: TextView
+    private lateinit var tvCausa: TextView
+    private lateinit var tvContenido: TextView
+    private lateinit var btnAnterior: ImageButton
+    private lateinit var btnPosterior: ImageButton
+
+    private var posIncidente = 0
 
     val lista = ArrayList<Map.Entry<String, List<Arrive>>>()
     val listaDirecciones = ArrayList<String>()
@@ -75,6 +95,7 @@ class MainActivity : AppCompatActivity() {
         tvIdParada = binding.tvBuscarParadaId
         tvNombre = binding.tvBuscarParadaNombre
         imgBus = binding.imgFotoBus
+        imgError = binding.imgError
 
 
         nParada = intent.getStringExtra("nParada")!!
@@ -327,6 +348,10 @@ class MainActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
 
+            var runnable: Runnable = Runnable {
+                imgError.visibility = View.VISIBLE
+            }
+
             try {
                 val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE )
 
@@ -337,43 +362,49 @@ class MainActivity : AppCompatActivity() {
 
                 if (call.isSuccessful) {
 
-                    val timeArrivalBus = call.body() //exceptioon
-                    var mapa = timeArrivalBus?.data?.get(0)?.arrive?.stream()?.collect(Collectors.groupingBy { it.line })
+                    timeArrivalBus = call.body() //exceptioon
 
-                    lista.clear()
-                    var numParada = ""
-                    var i = 0
-                    var stopLines = timeArrivalBus?.data?.get(0)?.stopInfo?.get(0)?.stopLines?.data
-                    mapa?.forEach {
-                        if (it.value.size > 0) {
-                            lista.add(it)
-                            //para coger las direcciones a la que va (A o B)
-                            listaDirecciones.add(stopLines?.get(i)?.to.toString())
+                    if (timeArrivalBus!!.data.get(0).arrive.size > 0 ) {
+                        var mapa = timeArrivalBus?.data?.get(0)?.arrive?.stream()?.collect(Collectors.groupingBy { it.line })
 
-                            //algunos buses como el E3 su codigo y el numero que se muestra es distinto
-                            //E3 por ejemplo es 403
-                            numParada = stopLines?.get(i)?.label.toString()
-                            listaCodigosLineas.add(buscarCodigoParada(numParada, stopLines))
-                            i++
-                        }
-                    }
-                    lista.sortWith(Comparator { entry, entry2 ->
-                        entry.value.get(0).estimateArrive - (entry2.value.get(0).estimateArrive)
-                    })
+                        lista.clear()
+                        var numParada = ""
+                        var i = 0
+                        var stopLines = timeArrivalBus?.data?.get(0)?.stopInfo?.get(0)?.stopLines?.data
+                        mapa?.forEach {
+                            if (it.value.size > 0) {
+                                lista.add(it)
+                                //para coger las direcciones a la que va (A o B)
+                                listaDirecciones.add(stopLines?.get(i)?.to.toString())
 
-                    //FIXME: Se tiene que cambiar
-                    runOnUiThread {
-                        tvIdParada.text =
-                            "Parada de buses EMT ${timeArrivalBus!!.data[0].stopInfo[0].label}"
-                        tvNombre.text = timeArrivalBus.data[0].stopInfo[0].description
-
-                        if (timeArrivalBus.data[0].incident.listaIncident.data.size > 0) {
-                            imgBus.setImageResource(R.drawable.ic_baseline_bus_alert_24)
-                            imgBus.setOnClickListener {
-                                Toast.makeText(this@MainActivity, "Eu", Toast.LENGTH_SHORT).show()
+                                //algunos buses como el E3 su codigo y el numero que se muestra es distinto
+                                //E3 por ejemplo es 403
+                                numParada = stopLines?.get(i)?.label.toString()
+                                listaCodigosLineas.add(buscarCodigoParada(numParada, stopLines))
+                                i++
                             }
                         }
+                        lista.sortWith(Comparator { entry, entry2 ->
+                            entry.value.get(0).estimateArrive - (entry2.value.get(0).estimateArrive)
+                        })
+
+                        runnable = Runnable {
+                            tvIdParada.text =
+                                "Parada de buses EMT ${timeArrivalBus!!.data[0].stopInfo[0].label}"
+                            tvNombre.text = timeArrivalBus!!.data[0].stopInfo[0].description
+
+                            if (timeArrivalBus!!.data[0].incident.listaIncident.data.size > 0) {
+                                imgBus.setImageResource(R.drawable.ic_baseline_bus_alert_24)
+                                imgBus.setOnClickListener {
+                                    mostrarAlertasParada()
+                                }
+                            }
+
+                            rvBuses.adapter?.notifyDataSetChanged()
+                        }
                     }
+
+
                     Log.d("Debug", "Datos actualizados")
                 } else {
                     Log.e("Debug", "Error al buscar parada")
@@ -382,11 +413,74 @@ class MainActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 Log.e("Error", "Error al actualizar datos")
             }
-
-            runOnUiThread {
-                rvBuses.adapter?.notifyDataSetChanged()
-            }
+            runOnUiThread(runnable)
         }
+    }
+
+    private fun mostrarAlertasParada() {
+
+        val builder = AlertDialog.Builder(this@MainActivity)
+        val view = layoutInflater.inflate(R.layout.dialog_alerta_parada, null)
+
+        builder.setView(view)
+
+        val dialog = builder.create()
+        dialog.show()
+
+        tvTitulo = view.findViewById<TextView>(R.id.tvTituloAlerta)
+        tvDesde = view.findViewById<TextView>(R.id.tvFechaInicioAlerta)
+        tvHasta = view.findViewById<TextView>(R.id.tvFechaFinAlerta)
+        tvContenido = view.findViewById<TextView>(R.id.tvContenidoAlerta)
+        tvCausa = view.findViewById<TextView>(R.id.tvCausaAlerta)
+        btnAnterior = view.findViewById<ImageButton>(R.id.btnIzqAlerta)
+        btnPosterior = view.findViewById<ImageButton>(R.id.btnDchaAlerta)
+
+        if (timeArrivalBus!!.data[0].incident.listaIncident.data.size < 2) {
+            btnPosterior.visibility = View.INVISIBLE
+            btnAnterior.visibility = View.INVISIBLE
+        }
+
+        asignarDatosAlerta(posIncidente)
+
+        btnAnterior.setOnClickListener {
+
+            if (posIncidente > 0) {
+                posIncidente--
+            }
+            else {
+                posIncidente = timeArrivalBus!!.data[0].incident.listaIncident.data.size - 1
+            }
+
+            asignarDatosAlerta(posIncidente)
+
+        }
+
+        btnPosterior.setOnClickListener {
+
+            if (posIncidente < timeArrivalBus!!.data[0].incident.listaIncident.data.size - 1) {
+                posIncidente++
+            }
+            else {
+                posIncidente = 0
+            }
+
+            asignarDatosAlerta(posIncidente)
+
+        }
+
+    }
+
+    private fun asignarDatosAlerta(posIncidente: Int) {
+
+        val  incidentData: IncidentData = timeArrivalBus!!.data[0].incident.listaIncident.data[posIncidente]
+
+        tvTitulo.text = incidentData.title
+        tvDesde.text = "Desde: ${incidentData.rssFrom}"
+        tvHasta.text = "Hasta: ${incidentData.rssTo}"
+        tvCausa.text = "Causa: ${incidentData.cause}"
+        tvContenido.text = incidentData.description.split(" Ver más detalle en documento adjunto")[0]
+        //Sabemos que es una solucion fea, pero no sabemos como tratarlo si no. Siempre tienen ese formato.
+
     }
 
     private fun buscarCodigoParada(numParada: String, stopLines: ArrayList<Line>?): String {
