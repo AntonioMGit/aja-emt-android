@@ -7,13 +7,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.proyectoemtaja.BuscarParadaActivity
 import com.example.proyectoemtaja.FavoritoAdapter
 import com.example.proyectoemtaja.MainActivity
 import com.example.proyectoemtaja.Paradas
 import com.example.proyectoemtaja.databinding.FragmentFavoritosBinding
+import com.example.proyectoemtaja.models.timeArrival.TimeArrivalBus
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Constantes
 import com.example.proyectoemtaja.utilities.UrlServidor
@@ -32,6 +36,8 @@ class FavoritoFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private var data: LiveData<TimeArrivalBus>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,6 +69,11 @@ class FavoritoFragment : Fragment() {
         binding.btnBuscarParada.setOnClickListener {
             //mostrarFragmentBuscar()
             Intent(requireContext(), MainActivity::class.java)
+        }
+
+        binding.btnBuscarParada.setOnClickListener {
+            var intent = Intent(requireContext(), BuscarParadaActivity::class.java)
+            startActivity(intent)
         }
 
         return root
@@ -101,32 +112,41 @@ class FavoritoFragment : Fragment() {
 
     private fun buscarFavoritos() {
         CoroutineScope(Dispatchers.IO).launch {
-            val sharedPreferences = requireActivity().getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+            try {
+                val sharedPreferences = requireActivity().getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
-            val call = getRetrofit().create(APIService::class.java).getFavoritos(
-                token = "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString()
-            )
+                val call = getRetrofit().create(APIService::class.java).getFavoritos(
+                    token = "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString()
+                )
 
-            if (call.isSuccessful) {
-                Log.d("Debug", "Entramos a buscar favoritos")
-                try {
-                    val favs = call.body()!!
-                    Paradas.listaFavoritos.addAll(favs)
+                if (call.isSuccessful) {
+                    Log.d("Debug", "Entramos a buscar favoritos")
+                    try {
+                        val favs = call.body()!!
+                        Paradas.listaFavoritos.addAll(favs)
 
-                    Log.d("Debug", "Favoritos actualizados")
-                } catch (e: Exception) {
-                    Log.e("Error", "Error al actializar datos")
+                        Log.d("Debug", "Favoritos actualizados")
+                    } catch (e: Exception) {
+                        Log.e("Error", "Error al actializar datos")
+                    }
+                    Log.d("Debug", "RV actualizados")
+                } else {
+                    Log.e("Debug", "Error al buscar")
+                    Log.e("Debug", call.toString())
                 }
-                Log.d("Debug", "RV actualizados")
-            } else {
-                Log.e("Debug", "Error al buscar")
-                Log.e("Debug", call.toString())
+            }
+            catch (e: Exception) {
+                Log.e("Error", "Error al buscar favoritos")
             }
 
             requireActivity().runOnUiThread {
                 rvFavoritos.adapter?.notifyDataSetChanged()
             }
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
+        buscarFavoritos()
     }
 }

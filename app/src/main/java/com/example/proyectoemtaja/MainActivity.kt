@@ -349,7 +349,7 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
 
             var runnable: Runnable = Runnable {
-                imgError.visibility = View.VISIBLE
+                imgError.visibility = View.GONE
             }
 
             try {

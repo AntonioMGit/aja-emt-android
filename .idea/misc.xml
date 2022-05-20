@@ -12,6 +12,7 @@
         <entry key="..\:/Users/ALEX/Desktop/Clase/proyectoMovil/app/src/main/res/drawable/ic_launcher_background.xml" value="0.26" />
         <entry key="..\:/Users/ALEX/Desktop/Clase/proyectoMovil/app/src/main/res/font/proxima_nova_family.xml" value="0.39947916666666666" />
         <entry key="..\:/Users/ALEX/Desktop/Clase/proyectoMovil/app/src/main/res/layout/activity_actualizar.xml" value="0.5" />
+        <entry key="..\:/Users/ALEX/Desktop/Clase/proyectoMovil/app/src/main/res/layout/activity_buscar_parada.xml" value="0.5" />
         <entry key="..\:/Users/ALEX/Desktop/Clase/proyectoMovil/app/src/main/res/layout/activity_favorito.xml" value="0.365625" />
         <entry key="..\:/Users/ALEX/Desktop/Clase/proyectoMovil/app/src/main/res/layout/activity_lista_paradas_linea.xml" value="0.5" />
         <entry key="..\:/Users/ALEX/Desktop/Clase/proyectoMovil/app/src/main/res/layout/activity_login.xml" value="0.1" />
@@ -32,6 +33,7 @@
         <entry key="..\:/Users/ALEX/Desktop/Clase/proyectoMovil/app/src/main/res/layout/list_item.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/ALEX/Desktop/Clase/proyectoMovil/app/src/main/res/menu/menu_favorito.xml" value="0.5" />
         <entry key="..\:/Users/ALEX/Desktop/Clase/proyectoMovil/app/src/main/res/menu/menu_favorito_guardado.xml" value="0.18903508771929825" />
+        <entry key="..\:/Users/ALEX/Desktop/Clase/proyectoMovil/app/src/main/res/menu/menu_search_bar.xml" value="0.3109649122807018" />
         <entry key="..\:/Users/ALEX/Desktop/Clase/proyectoMovil/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.26" />
         <entry key="..\:/fp/2/2/trabajo final/ProyectoEmtAja/app/src/main/res/font/proxima_nova_family.xml" value="0.2682291666666667" />
         <entry key="..\:/fp/2/2/trabajo final/ProyectoEmtAja/app/src/main/res/font/proxima_nova_font.xml" value="0.2682291666666667" />
