@@ -144,9 +144,11 @@ class FavoritoFragment : Fragment() {
             }
         }
     }
-
+/*
     override fun onResume() {
         super.onResume()
-        buscarFavoritos()
+        Paradas.listaFavoritos.clear()
+        rvFavoritos.adapter!!.notifyDataSetChanged()
     }
+    */
 }

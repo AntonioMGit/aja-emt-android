@@ -18,14 +18,13 @@
             android:name=".BuscarParadaActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:label="Buscar parada"
-            android:windowSoftInputMode="stateVisible|adjustResize"/>
+            android:label="Buscar parada"/>
         <activity
             android:name=".ActualizarActivity"
             android:exported="false"
             android:label="Actualización de usuarios"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".MenuPrincipalActivity"
             android:exported="false"
@@ -46,13 +45,13 @@
             android:exported="true"
             android:label="Registro"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".LoginActivity"
             android:exported="true"
             android:label="Login"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustResize">
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

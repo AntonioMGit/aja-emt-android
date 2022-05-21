@@ -3,10 +3,8 @@ package com.example.proyectoemtaja
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Html
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -14,7 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.core.text.HtmlCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.service.APIService
@@ -232,6 +230,9 @@ class MainActivity : AppCompatActivity() {
                         aplicarCambiosMenu()
                         "Guardado correctamente"
                     }
+                    403 -> {
+                        volverAlLogin()
+                    }
                     400 -> "El favorito ya existe"
                     else -> "Error al guardar favorito"
                 }
@@ -265,9 +266,13 @@ class MainActivity : AppCompatActivity() {
                     ).toString()
                 )
 
+
                 when (call.code()) {
                     202 -> "Actualizado correctamente"
                     400 -> "El favorito no existe"
+                    403 -> {
+                        volverAlLogin()
+                    }
                     else -> "Error al actualizar favorito"
                 }
             } catch (e: Exception) {
@@ -280,6 +285,11 @@ class MainActivity : AppCompatActivity() {
 
             botonActivo = true
         }
+    }
+
+    private fun volverAlLogin(): String {
+        startActivity(Intent(this, LoginActivity::class.java))
+        return "La sesión ha expirado. Vuelve a iniciar sesión."
     }
 
     private fun borrarFavorito(idParada: String) {
@@ -304,6 +314,9 @@ class MainActivity : AppCompatActivity() {
                         Paradas.listaFavoritos.removeIf { it.idParada == idParada }
                         aplicarCambiosMenu()
                         "Borrado correctamente"
+                    }
+                    403 -> {
+                        volverAlLogin()
                     }
                     400 -> "El favorito no existe"
                     else -> "Error al borrar favorito"
@@ -348,72 +361,84 @@ class MainActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
 
-            var runnable: Runnable = Runnable {
-                imgError.visibility = View.GONE
-            }
-
-            try {
-                val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE )
+            var runnable: Runnable = try {
+                val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
                 val call = getRetrofit().create(APIService::class.java).getTimeArrivalBus(
                     url = UrlServidor.urlTiempoAutobus(parada),
                     token = "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString()
                 )
 
-                if (call.isSuccessful) {
-
-                    timeArrivalBus = call.body() //exceptioon
-
-                    if (timeArrivalBus!!.data.get(0).arrive.size > 0 ) {
-                        var mapa = timeArrivalBus?.data?.get(0)?.arrive?.stream()?.collect(Collectors.groupingBy { it.line })
-
-                        lista.clear()
-                        var numParada = ""
-                        var i = 0
-                        var stopLines = timeArrivalBus?.data?.get(0)?.stopInfo?.get(0)?.stopLines?.data
-                        mapa?.forEach {
-                            if (it.value.size > 0) {
-                                lista.add(it)
-                                //para coger las direcciones a la que va (A o B)
-                                listaDirecciones.add(stopLines?.get(i)?.to.toString())
-
-                                //algunos buses como el E3 su codigo y el numero que se muestra es distinto
-                                //E3 por ejemplo es 403
-                                numParada = stopLines?.get(i)?.label.toString()
-                                listaCodigosLineas.add(buscarCodigoParada(numParada, stopLines))
-                                i++
-                            }
-                        }
-                        lista.sortWith(Comparator { entry, entry2 ->
-                            entry.value.get(0).estimateArrive - (entry2.value.get(0).estimateArrive)
-                        })
-
-                        runnable = Runnable {
-                            tvIdParada.text =
-                                "Parada de buses EMT ${timeArrivalBus!!.data[0].stopInfo[0].label}"
-                            tvNombre.text = timeArrivalBus!!.data[0].stopInfo[0].description
-
-                            if (timeArrivalBus!!.data[0].incident.listaIncident.data.size > 0) {
-                                imgBus.setImageResource(R.drawable.ic_baseline_bus_alert_24)
-                                imgBus.setOnClickListener {
-                                    mostrarAlertasParada()
-                                }
-                            }
-
-                            rvBuses.adapter?.notifyDataSetChanged()
+                when (call.code()) {
+                    200 -> {
+                        timeArrivalBus = call.body()
+                        modificarRV()
+                    }
+                    403 -> {
+                        Runnable {
+                            volverAlLogin()
                         }
                     }
-
-
-                    Log.d("Debug", "Datos actualizados")
-                } else {
-                    Log.e("Debug", "Error al buscar parada")
+                    else -> {
+                        Runnable {
+                            imgError.visibility = View.GONE
+                        }
+                    }
                 }
-
             } catch (e: Exception) {
                 Log.e("Error", "Error al actualizar datos")
+
+                Runnable {
+                    imgError.visibility = View.GONE
+                }
             }
+
             runOnUiThread(runnable)
+        }
+    }
+
+    private fun modificarRV(): Runnable {
+        return if (timeArrivalBus!!.data.get(0).arrive.size > 0) {
+            var mapa = timeArrivalBus?.data?.get(0)?.arrive?.stream()
+                ?.collect(Collectors.groupingBy { it.line })
+            lista.clear()
+            var numParada = ""
+            var i = 0
+            var stopLines = timeArrivalBus?.data?.get(0)?.stopInfo?.get(0)?.stopLines?.data
+
+            mapa?.forEach {
+                if (it.value.size > 0) {
+                    lista.add(it)
+                    //para coger las direcciones a la que va (A o B)
+                    listaDirecciones.add(stopLines?.get(i)?.to.toString())
+
+                    //algunos buses como el E3 su codigo y el numero que se muestra es distinto
+                    //E3 por ejemplo es 403
+                    numParada = stopLines?.get(i)?.label.toString()
+                    listaCodigosLineas.add(buscarCodigoParada(numParada, stopLines))
+                    i++
+                }
+            }
+            lista.sortWith(Comparator { entry, entry2 ->
+                entry.value.get(0).estimateArrive - (entry2.value.get(0).estimateArrive)
+            })
+            Runnable {
+                tvIdParada.text = "Parada de buses EMT ${numParada}"
+                tvNombre.text = timeArrivalBus!!.data[0].stopInfo[0].description
+
+                if (timeArrivalBus!!.data[0].incident.listaIncident.data.size > 0) {
+                    imgBus.setImageResource(R.drawable.ic_baseline_bus_alert_24)
+                    imgBus.setOnClickListener {
+                        mostrarAlertasParada()
+                    }
+                }
+                rvBuses.adapter?.notifyDataSetChanged()
+            }
+        } else {
+            Log.e("Debug", "Error al buscar parada")
+            Runnable {
+                imgError.visibility = View.GONE
+            }
         }
     }
 

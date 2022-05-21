@@ -183,6 +183,7 @@ class ActualizarActivity : AppCompatActivity() {
                     202 -> "Actualizado correctamente"
                     406 -> "Clave incorrecta"
                     400 -> "Usuario inexistente"
+                    403 -> volverAlLogin()
                     500 -> "Error al actualizar"
                     else -> "Error al actualizar"
                 }
@@ -231,6 +232,11 @@ class ActualizarActivity : AppCompatActivity() {
         val items = listOf(Sexo.STRING_HOMRBE, Sexo.STRING_MUJER, Sexo.STRING_NO_ESPECIFICADO)
         val adapter = ArrayAdapter(this, R.layout.list_item, items)
         (spSexo.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+    }
+
+    private fun volverAlLogin(): String {
+        startActivity(Intent(this, LoginActivity::class.java))
+        return "La sesión ha expirado. Vuelve a iniciar sesión."
     }
 
 }

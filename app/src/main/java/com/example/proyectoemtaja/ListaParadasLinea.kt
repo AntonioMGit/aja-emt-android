@@ -89,52 +89,64 @@ class ListaParadasLinea : AppCompatActivity() {
 
     private fun searchLinea(nLinea: String, dir: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            var runnable: Runnable = Runnable {
-                imgError.visibility = View.VISIBLE
-            }
-
-            try {
+            var runnable: Runnable = try {
                 val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
-
                 val call = getRetrofit().create(APIService::class.java).getParadasLinea(
                     url = UrlServidor.urlParadasLinea(ConversorCodigoEMT.pasarANumeros(nLinea), dir),
                     token = "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString(),
                     idUsuario = sharedPreferences.getString(Constantes.EMAIL_SHARED_PREFERENCES, "").toString()
                 )
 
-                if (call.isSuccessful) {
-                    Log.d("Debug", "Entramos a buscar paradas de linea " + nLinea + " Dir: " + dir)
-
-
+                when(call.code()) {
+                    200 -> {
+                        Log.d("Debug", "Entramos a buscar paradas de linea " + nLinea + " Dir: " + dir)
                         val todoParadasLinea = call.body() //excetcion
-
                         val stopsLinea = todoParadasLinea?.data?.get(0)?.stops
-
                         lista.clear()
 
                         stopsLinea?.forEach {
                             lista.add(it)
                         }
 
-                        runnable = Runnable {
+                        Runnable {
                             tvBuscarLineaId.text = "Paradas de la línea " + nLinea
                             tvBuscarLineaDir.text = "De: " + lista.get(0).name + " A: " + lista.get(lista.size-1).name
                             rvListaParadasLinea.adapter?.notifyDataSetChanged()
                         }
-
-                        Log.d("Debug", "Lista paradas cargada")
-
-
-                } else {
-                    Log.e("Debug", "Error al buscar paradas de una linea")
-                    Log.e("Debug", call.message())
+                    }
+                    403 -> {
+                        Runnable {
+                            startActivity(Intent(this@ListaParadasLinea, LoginActivity::class.java))
+                            Toast.makeText(this@ListaParadasLinea, "La sesión ha expirado. Vuelve a iniciar sesión.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    500 -> {
+                        Runnable {
+                            imgError.visibility = View.VISIBLE
+                            Toast.makeText(this@ListaParadasLinea, "Error interno.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    else -> {
+                        Runnable {
+                            imgError.visibility = View.VISIBLE
+                            Toast.makeText(this@ListaParadasLinea, "Error interno.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
-            } catch (e: Exception) {
-            Log.e("Error", "Error al actializar datos")
+            }
+            catch (e: Exception) {
+                Runnable {
+                    imgError.visibility = View.VISIBLE
+                }
             }
 
             runOnUiThread(runnable)
         }
+    }
+
+    private fun volverAlLogin(): String {
+        startActivity(Intent(this, LoginActivity::class.java))
+        return "La sesión ha expirado. Vuelve a iniciar sesión."
     }
 
 }

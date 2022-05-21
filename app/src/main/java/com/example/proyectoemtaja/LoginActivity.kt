@@ -1,6 +1,7 @@
 package com.example.proyectoemtaja
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -13,12 +14,14 @@ import com.example.proyectoemtaja.databinding.ActivityLoginBinding
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Constantes
 import com.example.proyectoemtaja.utilities.UrlServidor
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.system.exitProcess
 
 
 class LoginActivity : AppCompatActivity() {
@@ -188,5 +191,25 @@ class LoginActivity : AppCompatActivity() {
                 Log.e("Debug", "Error al buscar cargar paradas")
             }
         }
+    }
+
+    override fun onBackPressed() {
+        exitByBackKey()
+    }
+
+    private fun exitByBackKey() {
+        MaterialAlertDialogBuilder(this)
+            .setMessage("¿Quieres cerrar la aplicación?")
+            .setPositiveButton("Aceptar", object : DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                    finish()
+                }
+            }).setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun limpiarEditText() {
+        etEmail.editText!!.text.clear()
+        etContrasenia.editText!!.text.clear()
     }
 }

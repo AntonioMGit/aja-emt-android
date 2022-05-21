@@ -1,13 +1,17 @@
 package com.example.proyectoemtaja
 
+import android.content.DialogInterface
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.proyectoemtaja.databinding.ActivityMenuPrincipalBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlin.system.exitProcess
 
 class MenuPrincipalActivity : AppCompatActivity() {
 
@@ -32,4 +36,20 @@ class MenuPrincipalActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
+
+    override fun onBackPressed() {
+        exitByBackKey()
+    }
+
+    private fun exitByBackKey() {
+        MaterialAlertDialogBuilder(this)
+            .setMessage("¿Quieres volver al login?\nSe cerrará sesión.")
+            .setPositiveButton("Aceptar", object : DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                    finish()
+                }
+            }).setNegativeButton("Cancelar", null)
+            .show()
+    }
+
 }
