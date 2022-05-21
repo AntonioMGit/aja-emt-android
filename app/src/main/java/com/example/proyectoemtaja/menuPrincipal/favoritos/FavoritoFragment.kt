@@ -37,8 +37,6 @@ class FavoritoFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private var data: LiveData<TimeArrivalBus>? = null
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

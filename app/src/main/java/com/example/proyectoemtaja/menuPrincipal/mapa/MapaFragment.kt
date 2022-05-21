@@ -1,16 +1,14 @@
 package com.example.proyectoemtaja.menuPrincipal.mapa
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Criteria
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
-import android.location.LocationRequest
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -30,14 +28,15 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
-import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
 
 class MapaFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,GoogleMap.OnMyLocationClickListener {
 
@@ -67,6 +66,8 @@ class MapaFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+
+
         return root
     }
 
@@ -79,9 +80,6 @@ class MapaFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         //var latitud = 40.4165
        // var longitud = -3.70256
        // val madrid = LatLng(latitud, longitud)
-
-        //mMap.addMarker(MarkerOptions().position(madrid).title("Madrid"))
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(madrid, 17f))
 
         mMap.setMinZoomPreference(15f)
         mMap.setMaxZoomPreference(17f)
@@ -115,11 +113,26 @@ class MapaFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
 
         enableMyLocation()
 
+        var location = getMyLocation()
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location!!.latitude, location!!.longitude), 17f))
+
 
 
         //mMap.setOnCameraMoveListener { marker ->
         //    marker.isVisible = mMap.cameraPosition.zoom > 19
         //}
+    }
+
+    private fun getMyLocation(): Location? {
+        val lm = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        var myLocation: Location? = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        if (myLocation == null) {
+            val criteria = Criteria()
+            criteria.accuracy = Criteria.ACCURACY_COARSE
+            val provider = lm.getBestProvider(criteria, true)
+            myLocation = lm.getLastKnownLocation(provider!!)
+        }
+        return myLocation
     }
 
     private fun listarParadas() {
