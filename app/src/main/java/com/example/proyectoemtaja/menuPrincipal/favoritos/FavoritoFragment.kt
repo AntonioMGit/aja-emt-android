@@ -92,10 +92,6 @@ class FavoritoFragment : Fragment() {
 
     }
 
-    fun mostrarFragmentBuscar () {
-        //TODO("Poner un fragment para mostrar un buscador de paradas o algo, no se")
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

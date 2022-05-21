@@ -1,18 +1,29 @@
 package com.example.proyectoemtaja.menuPrincipal.mapa
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.location.LocationRequest
 import android.os.Bundle
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import com.example.proyectoemtaja.R
-import com.example.proyectoemtaja.databinding.FragmentMapaBinding
-import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.fragment.app.Fragment
 import com.example.proyectoemtaja.MainActivity
 import com.example.proyectoemtaja.Paradas
+import com.example.proyectoemtaja.R
+import com.example.proyectoemtaja.databinding.FragmentMapaBinding
 import com.example.proyectoemtaja.models.listaParadas.ListaParadas
 import com.example.proyectoemtaja.utilities.UrlServidor
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -20,14 +31,15 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.android.gms.tasks.OnCompleteListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.collections.ArrayList
 
-class MapaFragment : Fragment(), OnMapReadyCallback {
+
+class MapaFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,GoogleMap.OnMyLocationClickListener {
 
     private lateinit var mMap: GoogleMap
 
@@ -37,8 +49,8 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var appContext: Context
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    private val REQUEST_LOCATION_PERMISSION = 1
+
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -64,15 +76,17 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
         mMap = googleMap
 
         //TODO: poner aqui los datos del usuario
-        var latitud = 40.4165
-        var longitud = -3.70256
-        val madrid = LatLng(latitud, longitud)
+        //var latitud = 40.4165
+       // var longitud = -3.70256
+       // val madrid = LatLng(latitud, longitud)
 
-        mMap.addMarker(MarkerOptions().position(madrid).title("Madrid"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(madrid, 17f))
+        //mMap.addMarker(MarkerOptions().position(madrid).title("Madrid"))
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(madrid, 17f))
 
         mMap.setMinZoomPreference(15f)
         mMap.setMaxZoomPreference(17f)
+
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(), 17f))
 
         //mMap.maxZoomLevel(20f)
 
@@ -94,6 +108,14 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
             buscarParada(p)
 
         }
+
+
+        mMap.setOnMyLocationButtonClickListener(this)
+        mMap.setOnMyLocationClickListener(this)
+
+        enableMyLocation()
+
+
 
         //mMap.setOnCameraMoveListener { marker ->
         //    marker.isVisible = mMap.cameraPosition.zoom > 19
@@ -163,5 +185,58 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun isPermissionGranted() : Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun enableMyLocation() {
+        if (isPermissionGranted()) {
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                mMap.isMyLocationEnabled=true
+            }
+            mMap.isMyLocationEnabled = true
+
+        }
+        else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_LOCATION_PERMISSION
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray) {
+        // Check if location permissions are granted and if so enable the
+        // location data layer.
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
+                enableMyLocation()
+            }
+        }
+    }
+
+    override fun onMyLocationButtonClick(): Boolean {
+        Toast.makeText(appContext,"LLevando a mi localizacion", Toast.LENGTH_LONG).show()
+
+        return false
+    }
+
+    override fun onMyLocationClick(p0: Location) {
+        Toast.makeText(appContext,"Estas en ${p0.latitude} y ${p0.longitude} ", Toast.LENGTH_LONG).show()
     }
 }
