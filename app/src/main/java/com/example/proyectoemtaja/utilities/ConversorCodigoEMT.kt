@@ -73,8 +73,8 @@ object ConversorCodigoEMT {
 
             //lineas cero
             "001" -> codFinal = "361"
-            "002" -> codFinal = "361"
-            "C03" -> codFinal = "362" //ojo, pone C no 0
+            "002" -> codFinal = "362"
+            "C03" -> codFinal = "363" //ojo, pone C no 0
             "172" -> codFinal = "372"
             //401 a 405	Líneas exprés: E1 a E5
             "E1" -> codFinal = "401"

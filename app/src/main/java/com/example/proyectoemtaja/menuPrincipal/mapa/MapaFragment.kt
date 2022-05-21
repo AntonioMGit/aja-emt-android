@@ -69,13 +69,18 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
 
         mMap = googleMap
 
-        //datos centro de madrid
+        //TODO: poner aqui los datos del usuario
         var latitud = 40.4165
         var longitud = -3.70256
         val madrid = LatLng(latitud, longitud)
 
         mMap.addMarker(MarkerOptions().position(madrid).title("Madrid"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(madrid, 13f))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(madrid, 17f))
+
+        mMap.setMinZoomPreference(15f)
+        mMap.setMaxZoomPreference(17f)
+
+
 
         //mMap.maxZoomLevel(20f)
 
@@ -108,7 +113,7 @@ class MapaFragment : Fragment(), OnMapReadyCallback {
             if (Paradas.listaParadas != null) {
                 var paradas: ListaParadas = ListaParadas(Paradas.listaParadas!!)
 
-                for (i in 4600..4770) { //prueba con los 9 primeros
+                for (i in 1..paradas.data.size-1) { //todas
                     var cosa = paradas.data.get(i)
 
                     Log.d("Debug", i.toString() + ": " + cosa.toString())
