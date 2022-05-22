@@ -1,6 +1,7 @@
 package com.example.proyectoemtaja.menuPrincipal.mapa
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
@@ -123,16 +124,29 @@ class MapaFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         //}
     }
 
+    @SuppressLint("MissingPermission")
     private fun getMyLocation(): Location? {
-        val lm = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        var myLocation: Location? = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-        if (myLocation == null) {
-            val criteria = Criteria()
-            criteria.accuracy = Criteria.ACCURACY_COARSE
-            val provider = lm.getBestProvider(criteria, true)
-            myLocation = lm.getLastKnownLocation(provider!!)
+
+        enableMyLocation()
+
+        if(isPermissionGranted()) {
+            val lm = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            var myLocation: Location? = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            if (myLocation == null) {
+                val criteria = Criteria()
+                criteria.accuracy = Criteria.ACCURACY_COARSE
+                val provider = lm.getBestProvider(criteria, true)
+                myLocation = lm.getLastKnownLocation(provider!!)
+            }
+            return myLocation
+        }else {
+            //si no se dan permisos se pone la camara en madrid centro
+            var loc = Location("")
+            loc.latitude = 40.4165
+            loc.longitude = -3.70256
+
+            return loc
         }
-        return myLocation
     }
 
     private fun listarParadas() {
