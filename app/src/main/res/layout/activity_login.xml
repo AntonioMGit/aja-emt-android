@@ -76,19 +76,6 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!--
-                <Button
-                    android:id="@+id/btnOlvidarContrasenia"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:text="¿Has olvidado la contraseña?"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:textSize="10dp"
-                    android:textStyle="italic"
-                    android:gravity="start"
-                    android:layout_marginBottom="25dp"/>
-                 -->
-
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/etContrasenia"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -113,6 +100,17 @@
                     android:buttonTint="@color/pantone_285C"
                     android:checked="true"
                     android:text="Guardar credenciales"
+                    android:layout_marginBottom="10dp"/>
+
+                <Button
+                    android:id="@+id/btnRecuperarClave"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="¿Has olvidado la contraseña?"
+                    android:textSize="10sp"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:textStyle="italic"
+                    android:gravity="start"
                     android:layout_marginBottom="50dp"/>
 
                 <Button

@@ -211,7 +211,7 @@ class MainActivity : AppCompatActivity() {
 
             botonActivo = false
 
-            var msg = try {
+            var msg: String = try {
                 val sharedPreferences = getSharedPreferences(
                     Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES,
                     Context.MODE_PRIVATE

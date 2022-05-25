@@ -120,17 +120,18 @@ class RegisterActivity : AppCompatActivity() {
             return false;
         }
 
+        if (!(password1.editText!!.text.toString() == password2.editText!!.text.toString())) {
+            Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_LONG).show()
+            limpiarClaves()
+            return false
+        }
+
         if (!Constantes.regexClave.matches(password1.editText!!.text.toString())) {
             Toast.makeText(this, "La contraseña no sigue los requisitos", Toast.LENGTH_SHORT).show()
             limpiarClaves()
             return false
         }
 
-        if (!(password1.editText!!.text.toString() == password2.editText!!.text.toString())) {
-            Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_LONG).show()
-            limpiarClaves()
-            return false
-        }
 
         return true
 

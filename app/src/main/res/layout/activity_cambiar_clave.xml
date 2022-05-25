@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CambiarClaveActivity"
+    android:background="@color/pantone_285C">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gv1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.085" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gv2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.915" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gh1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gh2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.95" />
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:cardCornerRadius="50dp"
+        app:layout_constraintBottom_toBottomOf="@id/gh2"
+        app:layout_constraintEnd_toEndOf="@id/gv2"
+        app:layout_constraintStart_toStartOf="@id/gv1"
+        app:layout_constraintTop_toTopOf="@id/gh1"
+        app:cardElevation="20dp">
+
+        <ScrollView
+            android:id="@+id/viewSolicitarCorreo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:src="@mipmap/logo_emt"
+                    android:layout_marginBottom="100dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/etCorreo"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Correo electrónico"
+                    app:helperTextEnabled="true"
+                    app:helperText="Introduzca el correo electrónico de la cuenta que quiera recuperar. \nSe te enviará un correo con un código de recuperación."
+                    android:layout_marginBottom="32dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/btnConfirmarCorreo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bordes_redondos"
+                    android:fontFamily="@font/proxima_nova_font"
+                    android:text="Recuperar contraseña"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="15dp"/>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <ScrollView
+            android:id="@+id/viewSolicitarClave"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="20dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:src="@mipmap/logo_emt"
+                    android:layout_marginBottom="100dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/etCodigo"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Código"
+                    android:layout_marginBottom="10dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/etClave"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Contraseña"
+                    app:endIconMode="password_toggle"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="20"
+                    app:helperTextEnabled="true"
+                    app:helperText="La contraseña debe cumplir:
+                        \n- Tamaño entre 12 y 20 caracteres
+                        \n- Al menos una mayuscula
+                        \n- Al menos una minuscula
+                        \n- Al menos un numero
+                        \n- Al menos un símbolo
+                    "
+                    android:layout_marginBottom="20dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/btnConfirmarCambio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bordes_redondos"
+                    android:fontFamily="@font/proxima_nova_font"
+                    android:text="Cambir contraseña"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="15dp"/>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

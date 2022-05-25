@@ -4,7 +4,7 @@ class UrlServidor {
 
     companion object {
         // val URL_BASE: String = "http://172.26.110.199:8080"
-        const val URL_BASE: String = "http://192.168.1.41:8080"
+        const val URL_BASE: String = "http://192.168.1.132:8080"
 
         fun urlTiempoAutobus (parada: String): String {
             return "/controladores-emt/consultar-parada/$parada"
@@ -33,5 +33,9 @@ class UrlServidor {
         const val URL_ACTUALIZAR_FAVORITO = "/favorito/actualizar"
 
         const val URL_BORRAR_FAVORITO = "/favorito/borrar"
+
+        const val URL_PEDIR_CODIGO = "/usuario/codigo-recuperacion"
+
+        const val URL_CAMBIAR_PASSWORD = "/usuario/cambiar-clave"
     }
 }

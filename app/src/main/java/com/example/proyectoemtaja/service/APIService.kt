@@ -3,10 +3,7 @@ package com.example.proyectoemtaja.service
 import com.example.proyectoemtaja.models.timeArrival.TimeArrivalBus
 import com.example.proyectoemtaja.models.listaParadas.ListaParadas
 import com.example.proyectoemtaja.models.paradasLinea.ParadasLinea
-import com.example.proyectoemtaja.models.peticiones.ActualizarUsuarioRequest
-import com.example.proyectoemtaja.models.peticiones.BorrarFavoritoRequest
-import com.example.proyectoemtaja.models.peticiones.Favorito
-import com.example.proyectoemtaja.models.peticiones.LoginResponse
+import com.example.proyectoemtaja.models.peticiones.*
 import com.example.proyectoemtaja.models.usuario.Usuario
 import com.example.proyectoemtaja.utilities.Cabeceras
 import com.example.proyectoemtaja.utilities.UrlServidor
@@ -85,5 +82,15 @@ interface APIService {
     suspend fun borrarFavorito(
         @Header(Cabeceras.HEADER_TOKEN) token: String,
         @Body favorito: BorrarFavoritoRequest
+    ): Response<Void>
+
+    @POST(UrlServidor.URL_PEDIR_CODIGO)
+    suspend fun pedirCodigo(
+        @Header("correo") correo: String
+    ): Response<Void>
+
+    @PUT(UrlServidor.URL_CAMBIAR_PASSWORD)
+    suspend fun cambiarClave(
+        @Body request: CambiarClaveRequest
     ): Response<Void>
 }

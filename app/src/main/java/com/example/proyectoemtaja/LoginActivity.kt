@@ -59,6 +59,10 @@ class LoginActivity : AppCompatActivity() {
         binding.btnLogin.setOnClickListener {
             accionBotonLogin()
         }
+
+        binding.btnRecuperarClave.setOnClickListener {
+            startActivity(Intent(this, CambiarClaveActivity::class.java))
+        }
     }
 
     private fun probarToken() {
@@ -70,13 +74,11 @@ class LoginActivity : AppCompatActivity() {
                 val call = getRetrofit().create(APIService::class.java).probarToken(token = "Bearer " + token)
 
                 if (call.isSuccessful) {
-                    Log.e("as", "token bien  --------> " + token.toString() + "")
-
-                    Log.e("as", "codigo --------> " + call.code().toString() + "")
+                    Log.d("Debug", "Token aceptado")
                     irMenuPrincipal()
                 } else {
-                    Log.e("as", "token mal  --------> " + token.toString() + "")
-                    Log.e("Error", "Token no valido")
+                    Log.d("Debug", "Token no valido")
+                    //buscarDatos()
                 }
             }
             catch (e: Exception) {
@@ -100,7 +102,7 @@ class LoginActivity : AppCompatActivity() {
 
     /*
     private fun buscarDatos() {
-        val sharedPreferences = getSharedPreferences(Variables.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
         val emailGuardado = sharedPreferences.getString("email", "")
         val passGuardada = sharedPreferences.getString("pass", "")
 
@@ -114,38 +116,30 @@ class LoginActivity : AppCompatActivity() {
             var msg: String  = ""
             try {
                 val call = getRetrofit().create(APIService::class.java).login(email, pass)
-
                 if (call.isSuccessful) {
 
-                    val sharedPreferences =
-                        getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES,
-                            Context.MODE_PRIVATE)
+                    val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
                     val editor = sharedPreferences.edit()
-                    //Si se ha pulsado el check de guardar credenciales se guardan
-                    if(ckbxGuardarCredenciales.isChecked) {
-                        editor.apply {
-                            putString(Constantes.EMAIL_SHARED_PREFERENCES, email)
-                            putString(Constantes.PASSWORD_SHARED_PREFERENCES, MD5.encriptar(pass))
-                            putString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES,
-                                call.body()?.token.toString())
-                            //putString("refreshToken", call.body()?.token.toString())
-                        }.apply()
-                    }else{
-                        //por si acaso se pone pass en blanco , el token y el mail se tiene que guardar si o si al loguear
-                        editor.apply {
-                            putString(Constantes.EMAIL_SHARED_PREFERENCES, email)
-                            putString(Constantes.PASSWORD_SHARED_PREFERENCES, "")
-                            putString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES,
-                                call.body()?.token.toString())
-                            //putString("refreshToken", call.body()?.token.toString())
-                        }.apply()
-                    }
+
+                    editor.apply {
+                        putString(Constantes.EMAIL_SHARED_PREFERENCES, email)
+
+                        putString(Constantes.PASSWORD_SHARED_PREFERENCES,
+                            if (ckbxGuardarCredenciales.isChecked) {
+                                MD5.encriptar(pass)
+                            }
+                            else {
+                                ""
+                            })
+                        putString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, call.body()?.token.toString())
+                    }.apply()
 
                     msg = "Bienvenido $email"
 
                     irMenuPrincipal()
 
-                } else if (call.code() == 401){
+                }
+                else {
                     msg = "Usuario o contraseña incorrectos."
                     etContrasenia.editText!!.text.clear()
                 }

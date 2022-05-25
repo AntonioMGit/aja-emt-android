@@ -230,13 +230,14 @@ class MapaFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
+                //enableMyLocation()
                 mMap.isMyLocationEnabled=true
             }
             mMap.isMyLocationEnabled = true
 
         }
         else {
-            ActivityCompat.requestPermissions(
+            var s = ActivityCompat.requestPermissions(
                 requireActivity(),
                 arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
                 REQUEST_LOCATION_PERMISSION

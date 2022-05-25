@@ -10,15 +10,18 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Emt AJA"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/logo_emt"
         android:supportsRtl="true"
         android:theme="@style/Theme.ProyectoEmtAja"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".CambiarClaveActivity"
+            android:exported="false" />
+        <activity
             android:name=".BuscarParadaActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:label="Buscar parada"/>
+            android:label="Buscar parada"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ActualizarActivity"
             android:exported="false"
