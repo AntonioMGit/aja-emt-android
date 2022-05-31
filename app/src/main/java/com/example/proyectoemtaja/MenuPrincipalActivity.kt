@@ -41,6 +41,10 @@ class MenuPrincipalActivity : AppCompatActivity() {
         exitByBackKey()
     }
 
+    /*
+    FIXME: android.view.WindowLeaked: Activity com.example.proyectoemtaja.MainActivity has leaked window DecorView@5ec21d5[MainActivity] that was originally added here
+    Esto ocurre porque el dialog esta abierto. Hay que guardarlo en una variable y en el OnDestroy hay que cerrarlo.
+     */
     private fun exitByBackKey() {
         MaterialAlertDialogBuilder(this)
             .setMessage("¿Quieres volver al login?\nSe cerrará sesión.")
