@@ -3,47 +3,47 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_favoritos">
 
     <fragment
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_favoritos"
         android:name="com.example.proyectoemtaja.menuPrincipal.favoritos.FavoritoFragment"
         android:label="Favoritos"
         tools:layout="@layout/fragment_favoritos" >
         <action
             android:id="@+id/action_navigation_home_to_navigation_dashboard"
-            app:destination="@id/navigation_dashboard" />
+            app:destination="@id/navigation_mapa" />
         <action
             android:id="@+id/action_navigation_home_to_navigation_notifications"
-            app:destination="@id/navigation_notifications" />
+            app:destination="@id/navigation_ajustes" />
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_mapa"
         android:name="com.example.proyectoemtaja.menuPrincipal.mapa.MapaFragment"
         android:label="Mapa"
         tools:layout="@layout/fragment_mapa" >
         <action
             android:id="@+id/action_navigation_dashboard_to_navigation_notifications"
-            app:destination="@id/navigation_notifications" />
+            app:destination="@id/navigation_ajustes" />
         <action
             android:id="@+id/action_navigation_dashboard_to_navigation_home"
-            app:destination="@id/navigation_home" />
+            app:destination="@id/navigation_favoritos" />
         <action
             android:id="@+id/action_navigation_dashboard_to_navigation_home2"
-            app:destination="@id/navigation_home" />
+            app:destination="@id/navigation_favoritos" />
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_ajustes"
         android:name="com.example.proyectoemtaja.menuPrincipal.ajustes.AjustesFragment"
         android:label="Ajustes"
         tools:layout="@layout/fragment_ajustes" >
         <action
             android:id="@+id/action_navigation_notifications_to_navigation_dashboard"
-            app:destination="@id/navigation_dashboard" />
+            app:destination="@id/navigation_mapa" />
         <action
             android:id="@+id/action_navigation_notifications_to_navigation_home"
-            app:destination="@id/navigation_home" />
+            app:destination="@id/navigation_favoritos" />
     </fragment>
 </navigation>

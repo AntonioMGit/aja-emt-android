@@ -2,7 +2,7 @@ package com.example.proyectoemtaja
 
 import android.content.DialogInterface
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.navigation.findNavController
@@ -11,7 +11,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.proyectoemtaja.databinding.ActivityMenuPrincipalBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlin.system.exitProcess
+import com.google.android.material.navigation.NavigationView
 
 class MenuPrincipalActivity : AppCompatActivity() {
 
@@ -30,7 +30,7 @@ class MenuPrincipalActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
+                R.id.navigation_favoritos, R.id.navigation_mapa, R.id.navigation_ajustes
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

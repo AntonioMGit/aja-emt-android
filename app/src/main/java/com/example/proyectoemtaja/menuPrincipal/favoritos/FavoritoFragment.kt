@@ -61,9 +61,6 @@ class FavoritoFragment : Fragment() {
 
         rvFavoritos.adapter = adapter
 
-
-        buscarFavoritos()
-
         binding.btnBuscarParada.setOnClickListener {
             //mostrarFragmentBuscar()
             Intent(requireContext(), MainActivity::class.java)
@@ -117,6 +114,7 @@ class FavoritoFragment : Fragment() {
                     Log.d("Debug", "Entramos a buscar favoritos")
                     try {
                         val favs = call.body()!!
+                        Paradas.listaFavoritos.clear()
                         Paradas.listaFavoritos.addAll(favs)
 
                         Log.d("Debug", "Favoritos actualizados")
@@ -138,11 +136,11 @@ class FavoritoFragment : Fragment() {
             }
         }
     }
-/*
+
     override fun onResume() {
         super.onResume()
-        Paradas.listaFavoritos.clear()
-        rvFavoritos.adapter!!.notifyDataSetChanged()
+        buscarFavoritos()
+
     }
-    */
+
 }
