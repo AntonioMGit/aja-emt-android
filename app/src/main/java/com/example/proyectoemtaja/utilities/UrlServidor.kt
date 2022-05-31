@@ -3,9 +3,7 @@ package com.example.proyectoemtaja.utilities
 class UrlServidor {
 
     companion object {
-        //const val URL_BASE: String = "http://172.26.110.201:8080"
-        //const val URL_BASE: String = "http://10.100.210.240:8080"
-        //const val URL_BASE: String = "http://188.26.196.93:8080"
+
         const val URL_BASE: String = "http://192.168.1.132:8080"
 
         fun urlTiempoAutobus (parada: String): String {
