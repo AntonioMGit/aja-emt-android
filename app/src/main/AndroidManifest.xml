@@ -16,7 +16,9 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".CambiarClaveActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Cambiar clave"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".BuscarParadaActivity"
             android:exported="false"
@@ -52,7 +54,7 @@
         <activity
             android:name=".LoginActivity"
             android:exported="true"
-            android:label="Login"
+            android:label="Emt AJA"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

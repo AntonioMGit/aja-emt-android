@@ -381,7 +381,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     else -> {
                         Runnable {
-                            imgError.visibility = View.GONE
+                            imgError.visibility = View.VISIBLE
                         }
                     }
                 }
@@ -389,7 +389,7 @@ class MainActivity : AppCompatActivity() {
                 Log.e("Error", "Error al actualizar datos")
 
                 Runnable {
-                    imgError.visibility = View.GONE
+                    imgError.visibility = View.VISIBLE
                 }
             }
 
@@ -423,7 +423,7 @@ class MainActivity : AppCompatActivity() {
                 entry.value.get(0).estimateArrive - (entry2.value.get(0).estimateArrive)
             })
             Runnable {
-                tvIdParada.text = "Parada de buses EMT ${numParada}"
+                tvIdParada.text = "Parada de buses EMT ${nParada}"
                 tvNombre.text = timeArrivalBus!!.data[0].stopInfo[0].description
 
                 if (timeArrivalBus!!.data[0].incident.listaIncident.data.size > 0) {
@@ -437,7 +437,16 @@ class MainActivity : AppCompatActivity() {
         } else {
             Log.e("Debug", "Error al buscar parada")
             Runnable {
-                imgError.visibility = View.GONE
+                tvIdParada.text = "Parada de buses EMT ${nParada}"
+                tvNombre.text = timeArrivalBus!!.data[0].stopInfo[0].description
+
+                if (timeArrivalBus!!.data[0].incident.listaIncident.data.size > 0) {
+                    imgBus.setImageResource(R.drawable.ic_baseline_bus_alert_24)
+                    imgBus.setOnClickListener {
+                        mostrarAlertasParada()
+                    }
+                }
+                imgError.visibility = View.VISIBLE
             }
         }
     }
