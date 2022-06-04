@@ -1,5 +1,11 @@
 package com.example.proyectoemtaja.utilities
 
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+/**
+ * URL del servidor
+ */
 class UrlServidor {
 
     companion object {
@@ -37,5 +43,13 @@ class UrlServidor {
         const val URL_PEDIR_CODIGO = "/usuario/codigo-recuperacion"
 
         const val URL_CAMBIAR_PASSWORD = "/usuario/cambiar-clave"
+
+        fun getRetrofit(): Retrofit {
+            return Retrofit.Builder().baseUrl(UrlServidor.URL_BASE)
+                .addConverterFactory(
+                    GsonConverterFactory.create()
+                ).build()
+
+        }
     }
 }

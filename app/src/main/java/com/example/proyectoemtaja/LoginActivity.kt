@@ -6,13 +6,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.CheckBox
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.example.proyectoemtaja.config.MD5
 import com.example.proyectoemtaja.databinding.ActivityLoginBinding
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Constantes
+import com.example.proyectoemtaja.utilities.Paradas
 import com.example.proyectoemtaja.utilities.UrlServidor
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
@@ -21,36 +22,36 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.system.exitProcess
 
-
+/**
+ * Activity login
+ */
 class LoginActivity : AppCompatActivity() {
 
+    /**
+     * Binding de la interfaz
+     */
     private lateinit var binding: ActivityLoginBinding
 
-
+    /**
+     * Campos
+     */
     private lateinit var etEmail: TextInputLayout
     private lateinit var etContrasenia: TextInputLayout
-
     private lateinit var ckbxGuardarCredenciales: CheckBox
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        probarToken()
-
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         etContrasenia = binding.etContrasenia
         etEmail = binding.etEmail
 
-        ckbxGuardarCredenciales = binding.ckbxGuardarCredenciales
+        probarToken()
 
-        //funcion que busca si hay datos del usuario guardados para saltarse el login
-        //si no hay datos no hace nada
-        //si hay datos loguea con los datos directamente
-        //buscarDatos()
+        ckbxGuardarCredenciales = binding.ckbxGuardarCredenciales
 
         binding.btnRegistrarse.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
@@ -65,20 +66,23 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Prueba el token mediante una llamada al servidor
+     */
     private fun probarToken() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
                 val token = sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "")!!
 
-                val call = getRetrofit().create(APIService::class.java).probarToken(token = "Bearer " + token)
+                val call = UrlServidor.getRetrofit().create(APIService::class.java).probarToken(token = "Bearer " + token)
 
                 if (call.isSuccessful) {
                     Log.d("Debug", "Token aceptado")
                     irMenuPrincipal()
                 } else {
                     Log.d("Debug", "Token no valido")
-                    //buscarDatos()
+                    buscarDatos()
                 }
             }
             catch (e: Exception) {
@@ -92,6 +96,9 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Accion del boton loggin
+     */
     private fun accionBotonLogin() {
         if (etContrasenia.editText!!.text.isNotBlank() && etEmail.editText!!.text.isNotBlank()) {
             loguear(etEmail.editText!!.text.toString(), MD5.encriptar(etContrasenia.editText!!.text.toString()))
@@ -100,37 +107,42 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    /*
+    /**
+     * Busca si se han guardado datos con anterioridad
+     */
     private fun buscarDatos() {
-        val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
-        val emailGuardado = sharedPreferences.getString("email", "")
-        val passGuardada = sharedPreferences.getString("pass", "")
+        try {
+            val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+            val emailGuardado = sharedPreferences.getString(Constantes.EMAIL_SHARED_PREFERENCES, "")
 
-        if (emailGuardado != null && passGuardada != null && emailGuardado != "" && passGuardada != "" ) {
-            loguear(emailGuardado, passGuardada)
+            if (emailGuardado != null && emailGuardado != "") {
+                etEmail.editText!!.setText(emailGuardado.toString())
+            }
+        }
+        catch (e: Exception) {
+            Log.e("Error", "Error al sacar datos de SharedPreferences ${e.message}")
         }
     }
-    */
+
+    /**
+     * Hace login
+     * @param email correo del usuario
+     * @param pass clave cifrada por MD5 del usuario
+     */
     private fun loguear(email: String, pass: String) {
         CoroutineScope(Dispatchers.IO).launch {
             var msg: String  = ""
             try {
-                val call = getRetrofit().create(APIService::class.java).login(email, pass)
+                val call = UrlServidor.getRetrofit().create(APIService::class.java).login(email, pass)
                 if (call.isSuccessful) {
-
                     val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
                     val editor = sharedPreferences.edit()
 
                     editor.apply {
-                        putString(Constantes.EMAIL_SHARED_PREFERENCES, email)
+                        if (ckbxGuardarCredenciales.isChecked) {
+                            putString(Constantes.EMAIL_SHARED_PREFERENCES, email)
+                        }
 
-                        putString(Constantes.PASSWORD_SHARED_PREFERENCES,
-                            if (ckbxGuardarCredenciales.isChecked) {
-                                MD5.encriptar(pass)
-                            }
-                            else {
-                                ""
-                            })
                         putString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, call.body()?.token.toString())
                     }.apply()
 
@@ -155,21 +167,22 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Lleva al menu principal
+     */
     private fun irMenuPrincipal() {
         cargarParadas()
         startActivity(Intent(applicationContext, MenuPrincipalActivity::class.java))
     }
 
-    private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl(UrlServidor.URL_BASE)/*.addConverterFactory(NullOnEmptyConverterFactory()) */
-            .addConverterFactory(GsonConverterFactory.create()).build()
-    }
-
+    /**
+     * Carga las paradas de la app
+     */
     private fun cargarParadas() {
 
         CoroutineScope(Dispatchers.Main).launch {
             val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
-            val call = getRetrofit().create(APIService::class.java).getListaParadas(
+            val call = UrlServidor.getRetrofit().create(APIService::class.java).getListaParadas(
                 "Bearer " + sharedPreferences.getString("accessToken", "").toString()
             )
 
@@ -187,21 +200,23 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Muestra mensaje a la hora de darle al botón de atrás
+     */
     override fun onBackPressed() {
-        exitByBackKey()
-    }
-
-    private fun exitByBackKey() {
         MaterialAlertDialogBuilder(this)
             .setMessage("¿Quieres cerrar la aplicación?")
             .setPositiveButton("Aceptar", object : DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, which: Int) {
-                    finish()
+                    finishAffinity()
                 }
             }).setNegativeButton("Cancelar", null)
             .show()
     }
 
+    /**
+     * Limpia los editText
+     */
     private fun limpiarEditText() {
         etEmail.editText!!.text.clear()
         etContrasenia.editText!!.text.clear()

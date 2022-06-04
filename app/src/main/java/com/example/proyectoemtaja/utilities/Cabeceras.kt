@@ -1,5 +1,8 @@
 package com.example.proyectoemtaja.utilities
 
+/**
+ * Cabeceras de las peticioones de la app
+ */
 class Cabeceras {
     companion object {
 

@@ -3,6 +3,9 @@ package com.example.proyectoemtaja.models.peticiones
 import com.example.proyectoemtaja.models.usuario.Sexo
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Peticion de actualizar usuario
+ */
 data class ActualizarUsuarioRequest(
 
     @SerializedName("clave")

@@ -1,6 +1,5 @@
 package com.example.proyectoemtaja
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,6 +13,7 @@ import com.example.proyectoemtaja.models.usuario.Sexo
 import com.example.proyectoemtaja.models.usuario.Usuario
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Constantes
+import com.example.proyectoemtaja.utilities.DatePickerFragment
 import com.example.proyectoemtaja.utilities.UrlServidor
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.CoroutineScope
@@ -23,18 +23,21 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
+/**
+ * Actividad de registro de usuarios
+ */
 class RegisterActivity : AppCompatActivity() {
 
+    /**
+     * Binding de la interfaz
+     */
+    private lateinit var binding: ActivityRegisterBinding
 
     //private lateinit var spSexo: Spinner
     private lateinit var spSexo: TextInputLayout
-
     private lateinit var etFechaNacimiento: TextInputLayout
-
     private lateinit var fechaSeleccionada: LocalDate
-    private lateinit var binding: ActivityRegisterBinding
     private lateinit var correo: TextInputLayout
     private lateinit var password1: TextInputLayout
     private lateinit var password2: TextInputLayout
@@ -71,14 +74,6 @@ class RegisterActivity : AppCompatActivity() {
 
         })
 
-        //lo pongo para probar que lo demas funciona
-        //habria que quitarlo
-/*
-        binding.button.setOnClickListener {
-            startActivity(Intent(this, FavoritoActivity::class.java))
-        }
-*/
-        //No esta roto, es porque si el token funciona, te mete directamente en la siguiente activity.
         binding.btnVolverLogin.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
         }
@@ -88,6 +83,9 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Comprueba si son datos que se pueden registrar
+     */
     private fun registrar() {
         if (todosLlenos()) {
             if (todosValidos()) {
@@ -98,6 +96,9 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Comprueba los datos
+     */
     private fun todosValidos(): Boolean {
 
         if (!Constantes.regexCorreo.matches(correo.editText!!.text.toString())) {
@@ -137,6 +138,11 @@ class RegisterActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Prueba la fecha
+     * @return {@true} si vale
+     *         {@false} si no vale
+     */
     private fun valeFecha(text: String): Boolean {
         return try {
             LocalDate.parse(text, Constantes.FORMATO_FECHA_MOSTRAR).isBefore(LocalDate.now())
@@ -145,6 +151,11 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Mira si todos los campos estan llenos
+     * @return {@true} si estan llenos
+     *         {@false} si hay alguno vacio
+     */
     private fun todosLlenos(): Boolean {
         return correo.editText!!.text.isNotBlank() &&
                 password1.editText!!.text.isNotBlank() &&
@@ -153,12 +164,15 @@ class RegisterActivity : AppCompatActivity() {
                 apellidos.editText!!.text.isNotBlank()
     }
 
+    /**
+     * Manda la peticion de registro al servidor
+      */
     private fun sendRequest() {
         CoroutineScope(Dispatchers.IO).launch {
             var msg: String = ""
 
             //Request
-            val call = getRetrofit().create(APIService::class.java).insertUsuario(
+            val call = UrlServidor.getRetrofit().create(APIService::class.java).insertUsuario(
                 Usuario(
                     correo = correo.editText!!.text.toString(),
                     clave = MD5.encriptar(password1.editText!!.text.toString()),
@@ -181,28 +195,27 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Limpia las claves
+     */
     private fun limpiarClaves() {
         password2.editText!!.text.clear()
         password1.editText!!.text.clear()
     }
 
-    private fun getRetrofit(): Retrofit {
 
-        // val gson = GsonBuilder().setDateFormat("yyyy-MM-dd").create()
-        return Retrofit.Builder().baseUrl(UrlServidor.URL_BASE).addConverterFactory(
-            GsonConverterFactory.create(/*gson*/)
-        ).build()
-    }
-
-
-    //Inicializar el dialogo creado en onCreateDialog de la clase DatePickerDialog
+    /**
+     * Inicializar el dialogo creado en onCreateDialog de la clase DatePickerDialog
+     */
     private fun showDatePickerDialog() {
         //Crear un objeto de la clase DatePickerDialog
         val datePicker = DatePickerFragment { day, month, year -> onDateSelected(day, month, year) }
         datePicker.show(supportFragmentManager, "datePicker")
     }
 
-    //Funcion que se le pasa a DatePickerDialog al crearlo. Cuando ya se ha seleccionado una fecha, se llama a este metodo
+    /**
+     * Funcion que se le pasa a DatePickerDialog al crearlo. Cuando ya se ha seleccionado una fecha, se llama a este metodo
+     */
     private fun onDateSelected(day: Int, month: Int, year: Int) {
 
         fechaSeleccionada = LocalDate.of(year, (month + 1), day)
@@ -210,6 +223,9 @@ class RegisterActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Inicializa el sponner
+     */
     private fun initSpinner() {
         spSexo = binding.spSexo
 

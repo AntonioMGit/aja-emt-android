@@ -1,5 +1,8 @@
 package com.example.proyectoemtaja.models.paradasLinea
 
+/**
+ * Data paradas linea
+ */
 data class DirectionsParadasLinea (
     var Direction1: Direction,
     var Direction2: Direction,

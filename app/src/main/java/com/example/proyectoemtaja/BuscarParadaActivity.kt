@@ -9,15 +9,34 @@ import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.databinding.ActivityBuscarParadaBinding
-import com.example.proyectoemtaja.models.peticiones.Favorito
+import com.example.proyectoemtaja.models.usuario.Favorito
+import com.example.proyectoemtaja.recyclerview_adapter.FavoritoAdapter
+import com.example.proyectoemtaja.utilities.Paradas
 import java.util.*
 
+/**
+ * Clase en las que se buscan paradas
+ */
 class BuscarParadaActivity : AppCompatActivity() {
 
+    /**
+     * Lista que emplearemos para hacer la busqueda por coincidencias
+     */
     val listaTemporal: ArrayList<Favorito> = ArrayList<Favorito>()
+
+    /**
+     * RV en el que mostraremos los datos de paradas
+     */
     private lateinit var rvBuscarParadas: RecyclerView
+
+    /**
+     * View que mostraremos en caso de que no haya datos
+     */
     private lateinit var view: View
 
+    /**
+     * Binding de la interfaz de la aplicacion
+     */
     private lateinit var _binding: ActivityBuscarParadaBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +57,10 @@ class BuscarParadaActivity : AppCompatActivity() {
         view = _binding.imgError
     }
 
+    /**
+     * Accion que hara el recycler view al hacer click en un elemento del mismo
+     * @param pos posicion en la lista
+     */
     private fun buscarParada(pos: Int) {
         val parada = listaTemporal[pos]
 
@@ -48,6 +71,9 @@ class BuscarParadaActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    /**
+     * Creacion de menu de opciones
+     */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
         menuInflater.inflate(R.menu.menu_search_bar, menu)

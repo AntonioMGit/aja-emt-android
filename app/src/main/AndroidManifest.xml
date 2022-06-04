@@ -36,7 +36,7 @@
             android:label="@string/title_activity_menu_principal"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ListaParadasLinea"
+            android:name=".ListaParadasLineaActivity"
             android:exported="false"
             android:label="Lista de paradas"
             android:screenOrientation="portrait" />

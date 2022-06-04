@@ -2,6 +2,9 @@ package com.example.proyectoemtaja.models.timeArrival
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Datos a recoger para ver los tiempos de los autobuses.
+ */
 data class Arrive(
 
     var line: String,

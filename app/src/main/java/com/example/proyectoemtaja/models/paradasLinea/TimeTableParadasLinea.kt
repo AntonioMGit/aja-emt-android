@@ -2,6 +2,9 @@ package com.example.proyectoemtaja.models.paradasLinea
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Data paradas linea
+ */
 data class TimeTableParadasLinea (
 
     var IdLine:String,

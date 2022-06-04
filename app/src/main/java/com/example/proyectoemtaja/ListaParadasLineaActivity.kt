@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.databinding.ActivityListaParadasLineaBinding
 import com.example.proyectoemtaja.models.paradasLinea.StopsParadasLinea
-import com.example.proyectoemtaja.models.timeArrival.Arrive
+import com.example.proyectoemtaja.recyclerview_adapter.ParadasLineaAdapter
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Constantes
 import com.example.proyectoemtaja.utilities.ConversorCodigoEMT
@@ -23,17 +23,36 @@ import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
-import java.util.stream.Collectors
 
-class ListaParadasLinea : AppCompatActivity() {
+/**
+ * Actividad de listado de paradas de una linea
+ */
+class ListaParadasLineaActivity : AppCompatActivity() {
 
+    /**
+     * Bindng de la interfaz
+     */
     private lateinit var binding: ActivityListaParadasLineaBinding
+
+    /**
+     * RecyclerView de lista de paradas
+     */
     private lateinit var rvListaParadasLinea: RecyclerView
+
+    /**
+     * Campos
+     */
     private lateinit var tvBuscarLineaId: TextView
     private lateinit var tvBuscarLineaDir: TextView
 
+    /**
+     * View a mostrar en caso de error
+     */
     private lateinit var imgError: View
 
+    /**
+     * Lista de paradas de la linea
+     */
     val lista = ArrayList<StopsParadasLinea>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,9 +64,7 @@ class ListaParadasLinea : AppCompatActivity() {
         var nLinea: String = intent.getStringExtra("nLinea")!!
         var dirLetra: String = intent.getStringExtra("dir")!!
 
-        var dir = "1"
-        if(dirLetra.equals("B"))
-            dir = "2"
+        var dir = if (dirLetra.equals("B"))  "1" else  "2"
 
         Toast.makeText(this, "ha llegado el numero: " + nLinea + " Dir: " + dir , Toast.LENGTH_SHORT).show()
 
@@ -70,31 +87,32 @@ class ListaParadasLinea : AppCompatActivity() {
         searchLinea(nLinea.toString(), dir.toString())
     }
 
+    /**
+     * Accion del boton del recyclerview
+     * @param pos Posicion en la lista
+     */
     fun buscarParada(pos: Int){
         var nParada = lista.get(pos).stop
 
-        Toast.makeText(this@ListaParadasLinea, nParada.toString(), Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@ListaParadasLineaActivity, nParada.toString(), Toast.LENGTH_SHORT).show()
 
         var intent = Intent(this, MainActivity::class.java)
         intent.putExtra("nParada", nParada.toString())
         startActivity(intent)
     }
 
-    private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl(UrlServidor.URL_BASE)
-            .addConverterFactory(
-                GsonConverterFactory.create()
-            ).build()
-    }
-
+    /**
+     * Llama al servidor para coger informacion de la lista de lineas
+     * @param nLinea numero de lineas
+     * @param dir direccion del bus
+     */
     private fun searchLinea(nLinea: String, dir: String) {
         CoroutineScope(Dispatchers.IO).launch {
             var runnable: Runnable = try {
                 val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                val call = getRetrofit().create(APIService::class.java).getParadasLinea(
+                val call = UrlServidor.getRetrofit().create(APIService::class.java).getParadasLinea(
                     url = UrlServidor.urlParadasLinea(ConversorCodigoEMT.pasarANumeros(nLinea), dir),
-                    token = "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString(),
-                    idUsuario = sharedPreferences.getString(Constantes.EMAIL_SHARED_PREFERENCES, "").toString()
+                    token = "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString()
                 )
 
                 when(call.code()) {
@@ -116,20 +134,20 @@ class ListaParadasLinea : AppCompatActivity() {
                     }
                     403 -> {
                         Runnable {
-                            startActivity(Intent(this@ListaParadasLinea, LoginActivity::class.java))
-                            Toast.makeText(this@ListaParadasLinea, "La sesión ha expirado. Vuelve a iniciar sesión.", Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(this@ListaParadasLineaActivity, LoginActivity::class.java))
+                            Toast.makeText(this@ListaParadasLineaActivity, "La sesión ha expirado. Vuelve a iniciar sesión.", Toast.LENGTH_SHORT).show()
                         }
                     }
                     500 -> {
                         Runnable {
                             imgError.visibility = View.VISIBLE
-                            Toast.makeText(this@ListaParadasLinea, "Error interno.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@ListaParadasLineaActivity, "Error interno.", Toast.LENGTH_SHORT).show()
                         }
                     }
                     else -> {
                         Runnable {
                             imgError.visibility = View.VISIBLE
-                            Toast.makeText(this@ListaParadasLinea, "Error interno.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@ListaParadasLineaActivity, "Error interno.", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -144,6 +162,9 @@ class ListaParadasLinea : AppCompatActivity() {
         }
     }
 
+    /**
+     * Te hace volver al login
+     */
     private fun volverAlLogin(): String {
         startActivity(Intent(this, LoginActivity::class.java))
         return "La sesión ha expirado. Vuelve a iniciar sesión."

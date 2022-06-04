@@ -1,11 +1,12 @@
-package com.example.proyectoemtaja
+package com.example.proyectoemtaja.recyclerview_adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.proyectoemtaja.models.peticiones.Favorito
+import com.example.proyectoemtaja.R
+import com.example.proyectoemtaja.models.usuario.Favorito
 
 
 class FavoritoAdapter(private val datos: ArrayList<Favorito>) : RecyclerView.Adapter<FavoritoAdapter.ViewHolderDatos>() {

@@ -1,4 +1,4 @@
-package com.example.proyectoemtaja
+package com.example.proyectoemtaja.recyclerview_adapter
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,24 +7,45 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.proyectoemtaja.R
 import com.example.proyectoemtaja.models.timeArrival.Arrive
 import java.util.stream.IntStream
+/**
+ * Adaptador de datos para recyclerviewers
+ * (Tiene que tener una lista ordenada, por eso creamos un ArrayList)
+ * @param datos Datos a pintar
+ */
+class BusParadaAdapter(
 
-class BusParadaAdapter(private val datos: ArrayList<Map.Entry<String, List<Arrive>>>) : RecyclerView.Adapter<BusParadaAdapter.ViewHolderDatos>() {
+    /**
+     * Datos a pintar
+     */
+    private val datos: ArrayList<Map.Entry<String, List<Arrive>>>
 
-    private var listDatos = datos
+) : RecyclerView.Adapter<BusParadaAdapter.ViewHolderDatos>() {
 
+    /**
+     * OnItemClickListener del recyclerview
+     */
     private var listener: OnItemClickListener? =  null
 
+    /**
+     * Interfaz encargada de recoger el evento de click listener
+     */
     interface OnItemClickListener{
         fun onItemClick(position: Int)
     }
 
+    /**
+     * Setter on itemClickListener
+     */
     fun setOnItemClickListener(listener: OnItemClickListener){
         this.listener = listener
     }
 
-    //Clase encargada de asignarle los datos al recycleviewer
+    /**
+     *  Clase encargada de asignarle los datos al recycleviewer
+     */
     class ViewHolderDatos(itemView: View, listener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {
 
         init {
@@ -57,9 +78,6 @@ class BusParadaAdapter(private val datos: ArrayList<Map.Entry<String, List<Arriv
 
             direccionBus.text = values.get(0).destination
 
-            //Ordenacion de tiempos
-            //values.stream().sorted { arrive, arrive2 -> arrive.estimateArrive.compareTo(arrive2.estimateArrive) }
-
             //Una especide de bucle for que está limitado si o si a 3 pero que recorre de 0 al size de la coleccion
             IntStream.range(0, if (values.size > 3) 3 else values.size).forEach {
                 var tiempo: Int = (values[it].estimateArrive / 60)
@@ -69,8 +87,9 @@ class BusParadaAdapter(private val datos: ArrayList<Map.Entry<String, List<Arriv
         }
     }
 
+
     override fun onBindViewHolder(holder: ViewHolderDatos, position: Int) {
-        holder.asignarDatos(listDatos[position])
+        holder.asignarDatos(datos[position])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderDatos {
@@ -80,6 +99,7 @@ class BusParadaAdapter(private val datos: ArrayList<Map.Entry<String, List<Arriv
     }
 
     override fun getItemCount(): Int {
-        return listDatos.size
+        return datos.size
     }
 }
+

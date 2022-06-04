@@ -1,9 +1,11 @@
 package com.example.proyectoemtaja.models.paradasLinea
 
-import com.example.proyectoemtaja.models.listaParadas.DataListaParadas
 import com.google.gson.annotations.SerializedName
 import java.util.ArrayList
 
+/**
+ * Data paradas linea
+ */
 data class ParadasLinea (
     var code: String,
 

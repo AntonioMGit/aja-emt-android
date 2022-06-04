@@ -1,4 +1,4 @@
-package com.example.proyectoemtaja
+package com.example.proyectoemtaja.recyclerview_adapter
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.proyectoemtaja.R
 import com.example.proyectoemtaja.models.paradasLinea.StopsParadasLinea
 import com.example.proyectoemtaja.utilities.ConversorCodigoEMT
 
@@ -21,14 +22,12 @@ class ParadasLineaAdapter (private val datos: ArrayList<StopsParadasLinea>) : Re
         this.listener = listener
     }
 
-    private var listDatos = datos
-
     class ViewHolderDatos(itemView: View, listener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {
 
         //numParada
-        val nombrePada = itemView.findViewById<TextView>(R.id.tvNombreBusParadas2)
-        val direccionBus = itemView.findViewById<TextView>(R.id.tvDireccionLineasParadas)
-        var busesQuePasan = itemView.findViewById<TextView>(R.id.tvLineasParda)
+        private val nombrePada: TextView = itemView.findViewById(R.id.tvNombreBusParadas2)
+        private val direccionBus: TextView = itemView.findViewById(R.id.tvDireccionLineasParadas)
+        private var busesQuePasan: TextView = itemView.findViewById(R.id.tvLineasParda)
 
         //val idParada = itemView.findViewById<TextView>(R.id.tvBuscarLineaId)
         //val nombreParada = itemView.findViewById<TextView>(R.id.tvFavoritoNombreParada)
@@ -59,16 +58,16 @@ class ParadasLineaAdapter (private val datos: ArrayList<StopsParadasLinea>) : Re
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ParadasLineaAdapter.ViewHolderDatos {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderDatos {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_linea_parada, null, false)
         return ViewHolderDatos(view, listener)
     }
 
     override fun onBindViewHolder(holder: ViewHolderDatos, position: Int) {
-        holder.asignarDatos(listDatos[position])
+        holder.asignarDatos(datos[position])
     }
 
     override fun getItemCount(): Int {
-        return listDatos.size
+        return datos.size
     }
 }

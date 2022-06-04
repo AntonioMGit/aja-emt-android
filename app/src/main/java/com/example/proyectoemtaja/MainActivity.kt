@@ -12,18 +12,19 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.databinding.ActivityMainBinding
 import com.example.proyectoemtaja.models.peticiones.BorrarFavoritoRequest
-import com.example.proyectoemtaja.models.peticiones.Favorito
+import com.example.proyectoemtaja.models.usuario.Favorito
 import com.example.proyectoemtaja.models.timeArrival.Arrive
 import com.example.proyectoemtaja.models.timeArrival.IncidentData
 import com.example.proyectoemtaja.models.timeArrival.Line
 import com.example.proyectoemtaja.models.timeArrival.TimeArrivalBus
+import com.example.proyectoemtaja.recyclerview_adapter.BusParadaAdapter
 import com.example.proyectoemtaja.utilities.Constantes
+import com.example.proyectoemtaja.utilities.Paradas
 import com.example.proyectoemtaja.utilities.UrlServidor
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
@@ -37,17 +38,41 @@ import java.util.stream.Collectors
 import kotlin.Comparator
 import kotlin.collections.ArrayList
 
+/**
+ * Activity para ver la informacion de las paradas
+ */
 class MainActivity : AppCompatActivity() {
 
+    /**
+     * Binding de la interfaz
+     */
     private lateinit var binding: ActivityMainBinding
+
+    /**
+     * Recycler view de info
+     */
     private lateinit var rvBuses: RecyclerView
+
+    /**
+     * Campos
+     */
     private lateinit var tvNombre: TextView
     private lateinit var tvIdParada: TextView
     private lateinit var imgBus: ImageView
 
+    /**
+     * View en caso de error
+     */
     private lateinit var imgError: View
 
+    /**
+     * Dice si se puede interactuar con los botones de guardar/actualizar/borrar favorito
+     */
     private var botonActivo: Boolean = true
+
+    /**
+     * Datos de la parada
+     */
     private var timeArrivalBus: TimeArrivalBus? = null
 
     //Dialog
@@ -60,15 +85,33 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvHasta: TextView
     private lateinit var tvCausa: TextView
     private lateinit var tvContenido: TextView
+    private lateinit var tvContador: TextView
     private lateinit var btnAnterior: ImageButton
     private lateinit var btnPosterior: ImageButton
 
+    /**
+     * Posicion de incidente en dialogo de alertas
+     */
     private var posIncidente = 0
 
+    /**
+     * Lista de datos del recyclerview
+     */
     val lista = ArrayList<Map.Entry<String, List<Arrive>>>()
+
+    /**
+     * Lista de direcciones asociadas a los autobuses
+     */
     val listaDirecciones = ArrayList<String>()
+
+    /**
+     * Lista de codigos asociados a los autobuses
+     */
     val listaCodigosLineas = ArrayList<String>()
 
+    /**
+     * Numero de parada
+     */
     var nParada: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,6 +186,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Dialogo de borrar favorito
+     */
     private fun dialogoBorrarFavorito() {
         MaterialAlertDialogBuilder(this)
             .setTitle("Alerta")
@@ -156,6 +202,9 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    /**
+     * Dialogo actualizarFavorito
+     */
     private fun dialogoActualizarFavorito() {
         val builder = AlertDialog.Builder(this@MainActivity)
         val view = layoutInflater.inflate(R.layout.dialog_actualizar_favorito, null)
@@ -179,6 +228,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Dialogo guardar favorito
+     */
     private fun dialogoGuardarFavorito() {
         val builder = AlertDialog.Builder(this@MainActivity)
         val view = layoutInflater.inflate(R.layout.dialog_guardar_favorito, null)
@@ -202,10 +254,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Aplica los cambios del menu
+     */
     private fun aplicarCambiosMenu() {
         invalidateOptionsMenu()
     }
 
+    /**
+     * Llama al servidor para guardar un favorito
+     * @param favorito favorito a guardar
+     */
     private fun guardarFavorito(favorito: Favorito) {
         CoroutineScope(Dispatchers.IO).launch {
 
@@ -216,7 +275,7 @@ class MainActivity : AppCompatActivity() {
                     Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES,
                     Context.MODE_PRIVATE
                 )
-                var call = getRetrofit().create(APIService::class.java).insertarFavorito(
+                var call = UrlServidor.getRetrofit().create(APIService::class.java).insertarFavorito(
                     favorito = favorito,
                     token = "Bearer " + sharedPreferences.getString(
                         Constantes.ACCESS_TOKEN_SHARED_PREFERENCES,
@@ -249,6 +308,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Llama al servidor para actualizar un favorito del usuario
+     */
     private fun actualizarFavorito(favorito: Favorito) {
         CoroutineScope(Dispatchers.IO).launch {
             botonActivo = false
@@ -258,7 +320,7 @@ class MainActivity : AppCompatActivity() {
                     Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES,
                     Context.MODE_PRIVATE
                 )
-                var call = getRetrofit().create(APIService::class.java).actualizarFavorito(
+                var call = UrlServidor.getRetrofit().create(APIService::class.java).actualizarFavorito(
                     favorito = favorito,
                     token = "Bearer " + sharedPreferences.getString(
                         Constantes.ACCESS_TOKEN_SHARED_PREFERENCES,
@@ -287,11 +349,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Manda de vuelta al login
+     */
     private fun volverAlLogin(): String {
         startActivity(Intent(this, LoginActivity::class.java))
         return "La sesión ha expirado. Vuelve a iniciar sesión."
     }
 
+    /**
+     * Llama al servidor para borrar a un favorito
+     * @param idParada id de favorito a borrar
+     */
     private fun borrarFavorito(idParada: String) {
         CoroutineScope(Dispatchers.IO).launch {
             botonActivo = false
@@ -301,7 +370,7 @@ class MainActivity : AppCompatActivity() {
                     Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES,
                     Context.MODE_PRIVATE
                 )
-                var call = getRetrofit().create(APIService::class.java).borrarFavorito(
+                var call = UrlServidor.getRetrofit().create(APIService::class.java).borrarFavorito(
                     favorito = BorrarFavoritoRequest(idParada),
                     token = "Bearer " + sharedPreferences.getString(
                         Constantes.ACCESS_TOKEN_SHARED_PREFERENCES,
@@ -335,6 +404,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Busca las paradas de una linea de autobuses
+     * @param pos posicion en la lista
+     */
     private fun buscarLinea(pos: Int) {
         var lin = lista[pos]
         var dir = listaDirecciones[pos]
@@ -342,7 +415,7 @@ class MainActivity : AppCompatActivity() {
 
         Toast.makeText(this@MainActivity, codLineas, Toast.LENGTH_SHORT).show()
 
-        var intent = Intent(this, ListaParadasLinea::class.java)
+        var intent = Intent(this, ListaParadasLineaActivity::class.java)
         intent.putExtra("nLinea", lin.key.toString())
         intent.putExtra("codLinea", codLineas)
         intent.putExtra("dir", dir)
@@ -350,13 +423,10 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl(UrlServidor.URL_BASE)
-            .addConverterFactory(
-                GsonConverterFactory.create()
-            ).build()
-    }
-
+    /**
+     * Busca los datos de la parada
+     * @param parada numero de parada
+     */
     private fun searchParada(parada: String) {
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -364,7 +434,7 @@ class MainActivity : AppCompatActivity() {
             var runnable: Runnable = try {
                 val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
-                val call = getRetrofit().create(APIService::class.java).getTimeArrivalBus(
+                val call = UrlServidor.getRetrofit().create(APIService::class.java).getTimeArrivalBus(
                     url = UrlServidor.urlTiempoAutobus(parada),
                     token = "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString()
                 )
@@ -397,6 +467,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Modifica los datos del recyclerviewer
+     * @returm Datos a ejecutar en el hilo principal
+     */
     private fun modificarRV(): Runnable {
         return if (timeArrivalBus!!.data.get(0).arrive.size > 0) {
             var mapa = timeArrivalBus?.data?.get(0)?.arrive?.stream()
@@ -451,6 +525,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Muestra las alertas de una parada
+     */
     private fun mostrarAlertasParada() {
 
         val builder = AlertDialog.Builder(this@MainActivity)
@@ -466,8 +543,10 @@ class MainActivity : AppCompatActivity() {
         tvHasta = view.findViewById<TextView>(R.id.tvFechaFinAlerta)
         tvContenido = view.findViewById<TextView>(R.id.tvContenidoAlerta)
         tvCausa = view.findViewById<TextView>(R.id.tvCausaAlerta)
+        tvContador = view.findViewById<TextView>(R.id.tvContador)
         btnAnterior = view.findViewById<ImageButton>(R.id.btnIzqAlerta)
         btnPosterior = view.findViewById<ImageButton>(R.id.btnDchaAlerta)
+
 
         if (timeArrivalBus!!.data[0].incident.listaIncident.data.size < 2) {
             btnPosterior.visibility = View.INVISIBLE
@@ -504,6 +583,10 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Asigna los datos a la alerta
+     * @param posIncidente Posicion del incidente actual
+     */
     private fun asignarDatosAlerta(posIncidente: Int) {
 
         val  incidentData: IncidentData = timeArrivalBus!!.data[0].incident.listaIncident.data[posIncidente]
@@ -512,11 +595,19 @@ class MainActivity : AppCompatActivity() {
         tvDesde.text = "Desde: ${incidentData.rssFrom}"
         tvHasta.text = "Hasta: ${incidentData.rssTo}"
         tvCausa.text = "Causa: ${incidentData.cause}"
+        //Sabemos que es una solucion fea, pero no sabemos como tratarlo si no. Siempre tienen ese formato. Lo que hay en la posicion 1 es una imagen en HTML.
         tvContenido.text = incidentData.description.split(" Ver más detalle en documento adjunto")[0]
-        //Sabemos que es una solucion fea, pero no sabemos como tratarlo si no. Siempre tienen ese formato.
+        tvContador.text = "${ posIncidente + 1 }/${ timeArrivalBus!!.data[0].incident.listaIncident.data.size }"
+
 
     }
 
+    /**
+     * Buscar codigo parada
+     * @param numParada Numero de parada
+     * @param stopLines array de lineas
+     * @return devuelve un string con la linea
+     */
     private fun buscarCodigoParada(numParada: String, stopLines: ArrayList<Line>?): String {
         var cod = ""
 

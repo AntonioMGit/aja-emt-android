@@ -1,5 +1,8 @@
 package com.example.proyectoemtaja.models.paradasLinea
 
+/**
+ * Data paradas linea
+ */
 data class Direction (
     var StartTime: String,
     var StopTime: String,

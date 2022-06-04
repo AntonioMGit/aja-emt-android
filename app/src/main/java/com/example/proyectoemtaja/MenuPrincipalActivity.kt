@@ -1,9 +1,11 @@
 package com.example.proyectoemtaja
 
+import android.Manifest
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,9 +15,22 @@ import com.example.proyectoemtaja.databinding.ActivityMenuPrincipalBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 
+/**
+ * Actividad con navegador inferior.
+ * Tiene tres fragmentos asociados:
+ *  - AjustesFragment.kt
+ *  - FavoritoFragment.kt
+ *  - MapaFragment.kt
+ */
 class MenuPrincipalActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMenuPrincipalBinding
+
+
+    /**
+     * Permisos de localizacion
+     */
+    private val REQUEST_LOCATION_PERMISSION = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,17 +50,15 @@ class MenuPrincipalActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
+            REQUEST_LOCATION_PERMISSION
+        )
     }
 
     override fun onBackPressed() {
-        exitByBackKey()
-    }
-
-    /*
-    FIXME: android.view.WindowLeaked: Activity com.example.proyectoemtaja.MainActivity has leaked window DecorView@5ec21d5[MainActivity] that was originally added here
-    Esto ocurre porque el dialog esta abierto. Hay que guardarlo en una variable y en el OnDestroy hay que cerrarlo.
-     */
-    private fun exitByBackKey() {
         MaterialAlertDialogBuilder(this)
             .setMessage("¿Quieres volver al login?\nSe cerrará sesión.")
             .setPositiveButton("Aceptar", object : DialogInterface.OnClickListener {
@@ -55,5 +68,7 @@ class MenuPrincipalActivity : AppCompatActivity() {
             }).setNegativeButton("Cancelar", null)
             .show()
     }
+
+
 
 }

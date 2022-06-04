@@ -3,6 +3,9 @@ package com.example.proyectoemtaja.models.paradasLinea
 import com.example.proyectoemtaja.models.timeArrival.Point
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Data paradas linea
+ */
 data class StopsParadasLinea (
     var stop: String,
     var name: String,

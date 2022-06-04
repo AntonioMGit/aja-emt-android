@@ -3,6 +3,10 @@ package com.example.proyectoemtaja.models.listaParadas
 import com.google.gson.annotations.SerializedName
 import java.util.ArrayList
 
+
+/**
+ * Datos lista paradas
+ */
 data class ListaParadas (
     var code: String,
 

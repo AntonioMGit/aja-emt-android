@@ -1,6 +1,5 @@
 package com.example.proyectoemtaja
 
-import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -18,13 +17,26 @@ import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+/**
+ * Activity de cambio de clave
+ */
 class CambiarClaveActivity : AppCompatActivity() {
 
+    /**
+     * Campos de la actividad
+     */
     private lateinit var etCorreo: TextInputLayout
     private lateinit var etCodigo: TextInputLayout
     private lateinit var etClave: TextInputLayout
 
+    /**
+     * View de peticion de correo
+     */
     private lateinit var viewCorreo: View
+
+    /**
+     * View de peticion de clave
+     */
     private lateinit var viewClave: View
 
     private lateinit var binding: ActivityCambiarClaveBinding
@@ -63,6 +75,9 @@ class CambiarClaveActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Accion del boton de cambiar clave
+     */
     private fun accionBtnCambiarClave() {
         if (Constantes.regexClave.matches(etClave.editText!!.text.toString())) {
             cambiarClave()
@@ -72,12 +87,10 @@ class CambiarClaveActivity : AppCompatActivity() {
         }
     }
 
-    private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl(UrlServidor.URL_BASE).addConverterFactory(
-            GsonConverterFactory.create(/*gson*/)
-        ).build()
-    }
 
+    /**
+     * Manda la peticion de cambiar clave
+     */
     private fun cambiarClave() {
         CoroutineScope(Dispatchers.IO).launch {
 
@@ -86,7 +99,7 @@ class CambiarClaveActivity : AppCompatActivity() {
             }
 
             val msg = try {
-                val call = getRetrofit().create(APIService::class.java).cambiarClave(
+                val call = UrlServidor.getRetrofit().create(APIService::class.java).cambiarClave(
                     CambiarClaveRequest(
                         idUsuario = etCorreo.editText!!.text.toString(),
                         clave = MD5.encriptar(etClave.editText!!.text.toString()),
@@ -95,7 +108,10 @@ class CambiarClaveActivity : AppCompatActivity() {
                 )
 
                 when (call.code()) {
-                    200 -> "La contraseña se ha cambiado correctamente"
+                    200 -> {
+                        finish()
+                        "La contraseña se ha cambiado correctamente"
+                    }
                     400 -> "El token introducido no existe"
                     404 -> "No se puede cambiar la clave"
                     else -> "Error al cambiar la clave"
@@ -112,6 +128,9 @@ class CambiarClaveActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Peticion para solicitar token de cambio de vlave
+     */
     private fun enviarCorreo() {
         CoroutineScope(Dispatchers.IO).launch {
 
@@ -120,7 +139,7 @@ class CambiarClaveActivity : AppCompatActivity() {
             }
 
             val msg = try {
-                val call = getRetrofit().create(APIService::class.java).pedirCodigo(
+                val call = UrlServidor.getRetrofit().create(APIService::class.java).pedirCodigo(
                     correo = etCorreo.editText!!.text.toString()
                 )
 
@@ -146,6 +165,9 @@ class CambiarClaveActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Cambia las view
+     */
     private fun ocultarView() {
         viewCorreo.visibility = View.GONE
         viewClave.visibility = View.VISIBLE

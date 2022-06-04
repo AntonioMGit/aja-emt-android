@@ -3,7 +3,6 @@ package com.example.proyectoemtaja
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
 import android.text.InputType
 import android.view.MotionEvent
 import android.view.View
@@ -11,7 +10,6 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LiveData
 import com.example.proyectoemtaja.config.MD5
 import com.example.proyectoemtaja.databinding.ActivityActualizarBinding
 import com.example.proyectoemtaja.models.peticiones.ActualizarUsuarioRequest
@@ -19,6 +17,7 @@ import com.example.proyectoemtaja.models.usuario.Sexo
 import com.example.proyectoemtaja.models.usuario.Usuario
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Constantes
+import com.example.proyectoemtaja.utilities.DatePickerFragment
 import com.example.proyectoemtaja.utilities.UrlServidor
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.CoroutineScope
@@ -29,17 +28,25 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
 import java.time.LocalDate
 
+/**
+ * Actividad de actializacion de datos de usuario
+ */
 class ActualizarActivity : AppCompatActivity() {
+
+    /**
+     * Binding de la interfaz
+     */
     private lateinit var binding:ActivityActualizarBinding
 
+    /**
+     * Campos de la actividad
+     */
     private lateinit var etAcNombre:TextInputLayout
     private lateinit var etAcApellidos:TextInputLayout
     private lateinit var etAcFecha:TextInputLayout
     private lateinit var spSexo:TextInputLayout
     private lateinit var etAcPasswordActual: TextInputLayout
     private lateinit var etAcPasswordNueva: TextInputLayout
-
-    private lateinit var fechaSeleccionada: LocalDate
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,12 +86,15 @@ class ActualizarActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Hace la peticion al servidor para rellenar los campos con los datos actuales.
+     */
     private fun rellenarFormulario() {
         CoroutineScope(Dispatchers.IO).launch {
             var msg: String = ""
             val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
             //Request
-            val call = getRetrofit().create(APIService::class.java).buscarUsuario("Bearer ${sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES,"").toString()}")
+            val call = UrlServidor.getRetrofit().create(APIService::class.java).buscarUsuario("Bearer ${sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES,"").toString()}")
 
             if (call.isSuccessful) {
                 val usuario: Usuario = call.body()!!
@@ -108,6 +118,9 @@ class ActualizarActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Comprueba los datos y si son correctos, actualiza.
+     */
     private fun actualizar() {
         if(todoRelleno()){
             if (todoValido()) {
@@ -119,6 +132,11 @@ class ActualizarActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Comprueba si los datos siguen los requisitos
+     * @return {@true} si es valido
+     *         {@false} si no es valido
+     */
     private fun todoValido(): Boolean {
 
         if (etAcNombre.editText!!.text.length > 20) {
@@ -147,6 +165,12 @@ class ActualizarActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Mira si la feha es valida
+     * @param text fecha a comprobar
+     * @return {@true} si la fecha es valida
+     *         {@false} si la fecha no es valida
+     */
     private fun valeFecha(text: String): Boolean {
         return try {
             LocalDate.parse(text, Constantes.FORMATO_FECHA_MOSTRAR).isBefore(LocalDate.now())
@@ -155,6 +179,11 @@ class ActualizarActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Mira si todo esta relleno
+     * @return {@true} si esta todo relleno
+     *         {@false} si no esta todo relleno
+     */
     private fun todoRelleno(): Boolean {
         return etAcNombre.editText!!.text.isNotBlank() &&
                 etAcApellidos.editText!!.text.isNotBlank() &&
@@ -163,11 +192,14 @@ class ActualizarActivity : AppCompatActivity() {
                 spSexo.editText!!.text.isNotBlank()
     }
 
+    /**
+     * Envia la request de actualizar datos
+     */
     private fun sendRequest() {
         CoroutineScope(Dispatchers.IO).launch {
             val sharedPreferences = getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
             //Request
-            val call = getRetrofit().create(APIService::class.java).actualizarUsuario(
+            val call = UrlServidor.getRetrofit().create(APIService::class.java).actualizarUsuario(
                 "Bearer ${sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES,"").toString()}",
                 ActualizarUsuarioRequest(
                     clave = MD5.encriptar(etAcPasswordActual.editText!!.text.toString()),
@@ -197,44 +229,44 @@ class ActualizarActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Limplia la seccion de claves
+     */
     private fun limpiarClaves() {
         etAcPasswordActual.editText!!.text.clear()
         etAcPasswordNueva.editText!!.text.clear()
     }
 
-    private fun getRetrofit(): Retrofit {
 
-        // val gson = GsonBuilder().setDateFormat("yyyy-MM-dd").create()
-        return Retrofit.Builder().baseUrl(UrlServidor.URL_BASE).addConverterFactory(
-            GsonConverterFactory.create(/*gson*/)
-        ).build()
-    }
-
-
-    //Inicializar el dialogo creado en onCreateDialog de la clase DatePickerDialog
+    /**
+     * Inicializar el dialogo creado en onCreateDialog de la clase DatePickerDialog
+     */
     private fun showDatePickerDialog() {
         //Crear un objeto de la clase DatePickerDialog
         val datePicker = DatePickerFragment { day, month, year -> onDateSelected(day, month, year) }
         datePicker.show(supportFragmentManager, "datePicker")
     }
 
-    //Funcion que se le pasa a DatePickerDialog al crearlo. Cuando ya se ha seleccionado una fecha, se llama a este metodo
+    /**
+     * Funcion que se le pasa a DatePickerDialog al crearlo. Cuando ya se ha seleccionado una fecha, se llama a este metodo
+     */
     private fun onDateSelected(day: Int, month: Int, year: Int) {
-
-        fechaSeleccionada = LocalDate.of(year, (month + 1), day)
-        etAcFecha.editText!!.setText(fechaSeleccionada.format(Constantes.FORMATO_FECHA_MOSTRAR).toString())
-
-        //Toast.makeText(this, "Fecha: ${fechaSeleccionada.format(Constantes.FORMATO_FECHA_MOSTRAR).toString()}", Toast.LENGTH_LONG).show()
+        etAcFecha.editText!!.setText(LocalDate.of(year, (month + 1), day, ).format(Constantes.FORMATO_FECHA_MOSTRAR).toString())
     }
 
+    /**
+     * Inicializa el spinner de sexo
+     */
     private fun initSpinner() {
         spSexo = binding.spSexo
-
-        val items = listOf(Sexo.STRING_HOMRBE, Sexo.STRING_MUJER, Sexo.STRING_NO_ESPECIFICADO)
-        val adapter = ArrayAdapter(this, R.layout.list_item, items)
+        val adapter = ArrayAdapter(this, R.layout.list_item, Sexo.getSexoLista())
         (spSexo.editText as? AutoCompleteTextView)?.setAdapter(adapter)
     }
 
+    /**
+     * Devuelve al login
+     * @return mensaje a mostrar por pantalla
+     */
     private fun volverAlLogin(): String {
         startActivity(Intent(this, LoginActivity::class.java))
         return "La sesión ha expirado. Vuelve a iniciar sesión."

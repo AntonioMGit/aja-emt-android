@@ -7,17 +7,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectoemtaja.BuscarParadaActivity
-import com.example.proyectoemtaja.FavoritoAdapter
+import com.example.proyectoemtaja.recyclerview_adapter.FavoritoAdapter
 import com.example.proyectoemtaja.MainActivity
-import com.example.proyectoemtaja.Paradas
+import com.example.proyectoemtaja.utilities.Paradas
 import com.example.proyectoemtaja.databinding.FragmentFavoritosBinding
-import com.example.proyectoemtaja.models.timeArrival.TimeArrivalBus
 import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Constantes
 import com.example.proyectoemtaja.utilities.UrlServidor
@@ -28,9 +26,19 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
 
+/**
+ * Fragment de favoritos
+ */
 class FavoritoFragment : Fragment() {
 
+    /**
+     * Binding de la interfaz
+     */
     private var _binding: FragmentFavoritosBinding? = null
+
+    /**
+     * Recyclerview en el que van los favoritos
+     */
     private lateinit var rvFavoritos: RecyclerView
 
     // This property is only valid between onCreateView and
@@ -74,6 +82,10 @@ class FavoritoFragment : Fragment() {
         return root
     }
 
+    /**
+     * Se ejecuta al hacer click en un item del RecyclerViwe
+     * @param pos posicion en la lista que se ha pulsado
+     */
     fun accionRV(pos: Int) {
         var fav = Paradas.listaFavoritos[pos]
 
@@ -92,39 +104,26 @@ class FavoritoFragment : Fragment() {
         _binding = null
     }
 
-    private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl(UrlServidor.URL_BASE)
-            .addConverterFactory(
-                GsonConverterFactory.create()
-            ).build()
-
-    }
-
-
+    /**
+     * Llama al servidor y busca los favoritos del usuario que ha iniciado sesion
+     */
     private fun buscarFavoritos() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val sharedPreferences = requireActivity().getSharedPreferences(Constantes.NOMBRE_FICHERO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
-                val call = getRetrofit().create(APIService::class.java).getFavoritos(
+                val call = UrlServidor.getRetrofit().create(APIService::class.java).getFavoritos(
                     token = "Bearer " + sharedPreferences.getString(Constantes.ACCESS_TOKEN_SHARED_PREFERENCES, "").toString()
                 )
 
                 if (call.isSuccessful) {
-                    Log.d("Debug", "Entramos a buscar favoritos")
-                    try {
-                        val favs = call.body()!!
-                        Paradas.listaFavoritos.clear()
-                        Paradas.listaFavoritos.addAll(favs)
+                    val favs = call.body()!!
+                    Paradas.listaFavoritos.clear()
+                    Paradas.listaFavoritos.addAll(favs)
 
-                        Log.d("Debug", "Favoritos actualizados")
-                    } catch (e: Exception) {
-                        Log.e("Error", "Error al actializar datos")
-                    }
-                    Log.d("Debug", "RV actualizados")
+                    Log.d("Debug", "Favoritos actualizados")
                 } else {
-                    Log.e("Debug", "Error al buscar")
-                    Log.e("Debug", call.toString())
+                    Log.e("Debug", "Error al buscar ${call.toString()}")
                 }
             }
             catch (e: Exception) {
@@ -140,7 +139,6 @@ class FavoritoFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         buscarFavoritos()
-
     }
 
 }

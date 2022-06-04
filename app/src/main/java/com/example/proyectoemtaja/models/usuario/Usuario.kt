@@ -3,6 +3,9 @@ package com.example.proyectoemtaja.models.usuario
 import com.google.gson.annotations.SerializedName
 import java.time.LocalDate
 
+/**
+ * Objeto usuario
+ */
 class Usuario(
     @SerializedName("correo")
     var correo:String,
