@@ -142,8 +142,10 @@ class MainActivity : AppCompatActivity() {
         nParada = intent.getStringExtra("nParada")!!
 
         searchParada(nParada.toString())
+
         Log.d("Debug", "OnCreate fin")
     }
+
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
 
@@ -413,7 +415,7 @@ class MainActivity : AppCompatActivity() {
         var dir = listaDirecciones[pos]
         var codLineas = listaCodigosLineas[pos]
 
-        Toast.makeText(this@MainActivity, codLineas, Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this@MainActivity, codLineas, Toast.LENGTH_SHORT).show()
 
         var intent = Intent(this, ListaParadasLineaActivity::class.java)
         intent.putExtra("nLinea", lin.key.toString())

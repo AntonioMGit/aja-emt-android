@@ -112,11 +112,18 @@ class MapaFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
 
             enableMyLocation()
 
+            Log.d("Error", "Antes de localizacion")
             var location = getMyLocation()
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location!!.latitude, location.longitude), 17f))
+
+
+            Log.d("Error", "Despues de localizacion")
         }
         catch (e: Exception) {
-            Log.e("Error", e.message!!)
+            Log.d("error", "Antes de mensaje")
+            e.message?.let { Log.e("Error", it) }
+            Log.d("error", "despues de mesage")
+            //Log.e("Error", "Algo salio mal")
         }
 
 

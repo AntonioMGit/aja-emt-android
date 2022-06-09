@@ -66,7 +66,7 @@ class ListaParadasLineaActivity : AppCompatActivity() {
 
         var dir = if (dirLetra.equals("B"))  "1" else  "2"
 
-        Toast.makeText(this, "ha llegado el numero: " + nLinea + " Dir: " + dir , Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this, "ha llegado el numero: " + nLinea + " Dir: " + dir , Toast.LENGTH_SHORT).show()
 
         var adapter = ParadasLineaAdapter(lista)
 
@@ -94,7 +94,7 @@ class ListaParadasLineaActivity : AppCompatActivity() {
     fun buscarParada(pos: Int){
         var nParada = lista.get(pos).stop
 
-        Toast.makeText(this@ListaParadasLineaActivity, nParada.toString(), Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this@ListaParadasLineaActivity, nParada.toString(), Toast.LENGTH_SHORT).show()
 
         var intent = Intent(this, MainActivity::class.java)
         intent.putExtra("nParada", nParada.toString())
