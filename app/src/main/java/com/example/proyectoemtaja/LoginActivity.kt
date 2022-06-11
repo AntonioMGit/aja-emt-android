@@ -48,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         etContrasenia = binding.etContrasenia
         etEmail = binding.etEmail
-
+        buscarDatos()
         probarToken()
 
         ckbxGuardarCredenciales = binding.ckbxGuardarCredenciales
@@ -82,7 +82,6 @@ class LoginActivity : AppCompatActivity() {
                     irMenuPrincipal()
                 } else {
                     Log.d("Debug", "Token no valido")
-                    buscarDatos()
                 }
             }
             catch (e: Exception) {
