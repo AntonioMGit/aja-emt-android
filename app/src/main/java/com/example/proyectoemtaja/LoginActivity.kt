@@ -44,12 +44,13 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        probarToken()
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         etContrasenia = binding.etContrasenia
         etEmail = binding.etEmail
         buscarDatos()
-        probarToken()
+
 
         ckbxGuardarCredenciales = binding.ckbxGuardarCredenciales
 
