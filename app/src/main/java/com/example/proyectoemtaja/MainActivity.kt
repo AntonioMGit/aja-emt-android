@@ -464,6 +464,8 @@ class MainActivity : AppCompatActivity() {
                     }
                     else -> {
                         Runnable {
+                            lista.clear()
+                            rvBuses.adapter!!.notifyDataSetChanged()
                             imgError.visibility = View.VISIBLE
                         }
                     }

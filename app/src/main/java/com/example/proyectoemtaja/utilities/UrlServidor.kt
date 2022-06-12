@@ -11,6 +11,7 @@ class UrlServidor {
     companion object {
 
         const val URL_BASE: String = "http://ec2-35-181-63-163.eu-west-3.compute.amazonaws.com"
+        //const val URL_BASE: String = "http://192.168.1.132:8080"
 
         fun urlTiempoAutobus (parada: String): String {
             return "/controladores-emt/consultar-parada/$parada"
