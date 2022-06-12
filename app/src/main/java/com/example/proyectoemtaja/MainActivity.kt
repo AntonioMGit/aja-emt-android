@@ -108,6 +108,11 @@ class MainActivity : AppCompatActivity() {
      */
     var nParada: String = ""
 
+    /**
+     * Booleano que permite controlar cuando se realiza el refresco de los tiempos
+     * Será falso cuando esta Activity no esté activa
+     * Será verdadero cuando esta Activity esté activa
+     */
     var refresco = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -627,12 +632,17 @@ class MainActivity : AppCompatActivity() {
 
         return cod
     }
-
+    /**
+     * Coroutine que permite llamar a la función de searchParada() para actualizar los tiempos
+     * Tiene una pausa de 10 segundo entre cada llamada
+     * Mientras la variable refresco sea true se ejecutará
+     * Cuando la variable refresco sea false dejará de ejecutarse
+     */
     fun refrescarTiempos(): Job {
         return CoroutineScope(Dispatchers.IO).launch {
             while(refresco) {
                 searchParada(nParada.toString())
-                Log.e("Tiempos", "Hola")
+                //Log.e("Tiempos", "Hola")
                 delay(10000)
             }
         }
