@@ -3,7 +3,6 @@ package com.example.proyectoemtaja
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -12,31 +11,26 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.databinding.ActivityMainBinding
 import com.example.proyectoemtaja.models.peticiones.BorrarFavoritoRequest
-import com.example.proyectoemtaja.models.usuario.Favorito
 import com.example.proyectoemtaja.models.timeArrival.Arrive
 import com.example.proyectoemtaja.models.timeArrival.IncidentData
 import com.example.proyectoemtaja.models.timeArrival.Line
 import com.example.proyectoemtaja.models.timeArrival.TimeArrivalBus
+import com.example.proyectoemtaja.models.usuario.Favorito
 import com.example.proyectoemtaja.recyclerview_adapter.BusParadaAdapter
+import com.example.proyectoemtaja.service.APIService
 import com.example.proyectoemtaja.utilities.Constantes
 import com.example.proyectoemtaja.utilities.Paradas
 import com.example.proyectoemtaja.utilities.UrlServidor
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.Exception
+import kotlinx.coroutines.*
+import java.lang.Runnable
 import java.util.stream.Collectors
-import kotlin.Comparator
-import kotlin.collections.ArrayList
 
 /**
  * Activity para ver la informacion de las paradas
@@ -114,6 +108,8 @@ class MainActivity : AppCompatActivity() {
      */
     var nParada: String = ""
 
+    var refresco = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d("Debug", "OnCreate ini")
         super.onCreate(savedInstanceState)
@@ -141,11 +137,21 @@ class MainActivity : AppCompatActivity() {
 
         nParada = intent.getStringExtra("nParada")!!
 
-        searchParada(nParada.toString())
+        //searchParada(nParada.toString())
 
         Log.d("Debug", "OnCreate fin")
     }
 
+    override fun onPause() {
+        super.onPause()
+        refresco = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refresco = true
+        refrescarTiempos()
+    }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
 
@@ -620,5 +626,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         return cod
+    }
+
+    fun refrescarTiempos(): Job {
+        return CoroutineScope(Dispatchers.IO).launch {
+            while(refresco) {
+                searchParada(nParada.toString())
+                Log.e("Tiempos", "Hola")
+                delay(10000)
+            }
+        }
     }
 }
