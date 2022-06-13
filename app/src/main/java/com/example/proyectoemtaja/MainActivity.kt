@@ -474,6 +474,8 @@ class MainActivity : AppCompatActivity() {
                 Log.e("Error", "Error al actualizar datos")
 
                 Runnable {
+                    lista.clear()
+                    rvBuses.adapter!!.notifyDataSetChanged()
                     imgError.visibility = View.VISIBLE
                 }
             }
